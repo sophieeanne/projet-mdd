@@ -244,8 +244,9 @@ class Program
                         break;
                     default:
                         Console.WriteLine("Erreur, veuillez entrer une information valide");
-                        return;
+                        break;
                 }
+                
             }while(choix != "nom" && choix != "prénom" && choix != "adresse" && choix != "téléphone" && choix != "mail");
 
             modification.Parameters.AddWithValue("@numClient", numClient);
