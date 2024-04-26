@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
@@ -45,10 +46,12 @@ class Program
                     Suppression_Client(CS);
                     break;
                 case 2:
-                    //Nombre_Clients(CS);
+                    Console.Clear();
+                    Nombre_Clients(CS);
                     break;
                 case 3:
-                    //Nombre_Clients_Commandes(CS);
+                    Console.Clear();
+                    Nombre_Clients_Commandes(CS);
                     break;
                 case 4:
                     //Produits_Stock(CS);
@@ -67,8 +70,6 @@ class Program
             continuer = Console.ReadLine();
         }while(continuer == "O" || continuer == "o");
       
-
-
     }
     static void Creation_Client(string CS)
     {
@@ -124,9 +125,22 @@ class Program
             Console.WriteLine("Veuillez entrer l'adresse du client");
             string adresseClient = Console.ReadLine();
             Console.WriteLine("Veuillez entrer le numéro de téléphone du client");
-            int telClient = Convert.ToInt32(Console.ReadLine());
+            string telClient = Console.ReadLine();
             Console.WriteLine("Veuillez entrer l'adresse mail du client");
             string mailClient = Console.ReadLine();
+            Console.WriteLine("A quel numéro de Fidélio est-il abonné ? (1, 2, 3, 4 ou null si aucun)");
+            int? fidelioClient;
+            string f = Console.ReadLine();
+
+            if (f.ToLower() == "null")
+            {
+                fidelioClient = null;
+            }
+            else
+            {
+                fidelioClient = Convert.ToInt32(f);
+            }
+
 
             //On crée les paramètres pour la requête
             MySqlParameter numClientParam = new MySqlParameter("@numClient", MySqlDbType.Int32);
@@ -141,6 +155,7 @@ class Program
             telClientParam.Value = telClient;
             MySqlParameter mailClientParam = new MySqlParameter("@mailClient", MySqlDbType.String);
             mailClientParam.Value = mailClient;
+            MySqlParameter fidelioClientParam = new MySqlParameter("@fidelioClient",MySqlDbType.Int32);
 
             //On crée la commande
             MySqlCommand creation = maConnexion.CreateCommand();
@@ -150,8 +165,9 @@ class Program
             creation.Parameters.Add(adresseClientParam);
             creation.Parameters.Add(telClientParam);
             creation.Parameters.Add(mailClientParam);
+            creation.Parameters.Add(fidelioClientParam);
 
-            creation.CommandText = "INSERT INTO client (nclient, nom, prenom, adresse, telephone, courriel) VALUES (@numClient, @nomClient, @prenomClient, @adresseClient, @telClient, @mailClient)";
+            creation.CommandText = "INSERT INTO client (nclient, nom, prenom, adresse, telephone, courriel, fidelio) VALUES (@numClient, @nomClient, @prenomClient, @adresseClient, @telClient, @mailClient, @fidelioClient)";
 
             //On exécute la commande
             int rowsAffected = creation.ExecuteNonQuery();
@@ -204,7 +220,7 @@ class Program
             //On demande à l'utilisateur de rentrer le numéro du client à modifier
             Console.WriteLine("Veuillez rentrer le numéro du client à modifier");
             int numClient = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Quelle information voulez-vous modifier ? (nom, prénom, adresse, téléphone, mail)");
+            Console.WriteLine("Quelle information voulez-vous modifier ? (nom, prénom, adresse, téléphone, mail, fidélio)");
             string choix = Console.ReadLine();
             MySqlCommand modification = maConnexion.CreateCommand();
 
@@ -242,12 +258,27 @@ class Program
                         modification.CommandText = "UPDATE client SET courriel = @mailClient WHERE nclient = @numClient";
                         modification.Parameters.AddWithValue("@mailClient", mailClient);
                         break;
+                    case "fidélio":
+                        Console.WriteLine("Veuillez entrer le numéro de souscription fidélio");
+                        int? fidelioClient;
+                        string f = Console.ReadLine();
+                        if (f.ToLower() == "null")
+                        {
+                            fidelioClient = null;
+                        }
+                        else
+                        {
+                            fidelioClient = Convert.ToInt32(f);
+                        }
+                        modification.CommandText = "UPDATE client SET fidelio = @fidelioClient WHERE nclient = @numClient";
+                        modification.Parameters.AddWithValue("@fidelioClient", fidelioClient);
+                        break;
                     default:
                         Console.WriteLine("Erreur, veuillez entrer une information valide");
                         break;
                 }
                 
-            }while(choix != "nom" && choix != "prénom" && choix != "adresse" && choix != "téléphone" && choix != "mail");
+            }while(choix != "nom" && choix != "prénom" && choix != "adresse" && choix != "téléphone" && choix != "mail" && choix !="fidélio");
 
             modification.Parameters.AddWithValue("@numClient", numClient);
 
@@ -255,7 +286,7 @@ class Program
 
             if (rowsAffected > 0)
             {
-                Console.WriteLine($"L'information du client a été modifiée !");
+                Console.WriteLine("L'information du client a été modifiée !");
             }
             else
             {
@@ -333,5 +364,40 @@ class Program
             Console.WriteLine("Error: " + e.Message);
             return;
         }
+    }
+    static void Nombre_Clients(string CS)
+    {
+        Console.BackgroundColor = ConsoleColor.Green;
+        Console.ForegroundColor = ConsoleColor.Black;
+        Console.WriteLine("Afficher le nombre de clients");
+        try
+        {
+            //Connexion à la base de données
+            MySqlConnection maConnexion = new MySqlConnection(CS);
+            maConnexion.Open();
+
+            //Création de la commande
+            int nbclients;
+            string nb_clients = "SELECT COUNT(*) nclient FROM client";
+            MySqlCommand commande = maConnexion.CreateCommand();
+            commande.CommandText = nb_clients;
+            object n = commande.ExecuteScalar();
+            if(n!=null)
+            {
+                nbclients = Convert.ToInt32(n);
+                Console.WriteLine("Il y'a " + nbclients + " clients en tout");
+            }
+            commande.Dispose();
+            maConnexion.Close();
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine("Erreur : "+e.Message);
+        }
+            
+    }
+    static void Nombre_Clients_Commandes(string CS)
+    {
+
     }
 }
