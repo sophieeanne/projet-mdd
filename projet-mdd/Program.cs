@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 class Program
@@ -54,7 +55,8 @@ class Program
                     Nombre_Clients_Commandes(CS);
                     break;
                 case 4:
-                    //Produits_Stock(CS);
+                    Console.Clear();
+                    Produits_Stock(CS);
                     break;
                 case 5:
                     //Pieces_Velos_Fournisseur(CS);
@@ -93,15 +95,16 @@ class Program
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
                     string valueAsString = reader.GetValue(i).ToString();
-                    currentRowAsString += valueAsString + " , ";
+                    currentRowAsString += valueAsString + " | ";
                 }
                 Console.WriteLine(currentRowAsString);
             }
             reader.Close();
+            voir_table.Dispose();
             int count = 0;
             int numClient;
             //On demande à l'utilisateur de rentrer les informations du client
-            do 
+            do
             {
                 Console.WriteLine("Veuillez entrer le numéro de client");
                 numClient = Convert.ToInt32(Console.ReadLine());
@@ -151,7 +154,7 @@ class Program
             prenomClientParam.Value = prenomClient;
             MySqlParameter adresseClientParam = new MySqlParameter("@adresseClient", MySqlDbType.String);
             adresseClientParam.Value = adresseClient;
-            MySqlParameter telClientParam = new MySqlParameter("@telClient", MySqlDbType.Int32);
+            MySqlParameter telClientParam = new MySqlParameter("@telClient", MySqlDbType.String);
             telClientParam.Value = telClient;
             MySqlParameter mailClientParam = new MySqlParameter("@mailClient", MySqlDbType.String);
             mailClientParam.Value = mailClient;
@@ -216,16 +219,26 @@ class Program
                 Console.WriteLine(currentRowAsString);
             }
             reader.Close();
+            voir_table.Dispose();
 
             //On demande à l'utilisateur de rentrer le numéro du client à modifier
+            int numClient;
             Console.WriteLine("Veuillez rentrer le numéro du client à modifier");
-            int numClient = Convert.ToInt32(Console.ReadLine());
+            while (!int.TryParse(Console.ReadLine(), out numClient)) //si l'input n'est pas un nombre
+            {
+                Console.WriteLine("Veuillez entrer un numéro valide.");
+            }
+
             Console.WriteLine("Quelle information voulez-vous modifier ? (nom, prénom, adresse, téléphone, mail, fidélio)");
             string choix = Console.ReadLine();
-            MySqlCommand modification = maConnexion.CreateCommand();
-
-            do
+            while (choix != "nom" && choix != "prénom" && choix != "adresse" && choix != "téléphone" && choix != "mail" && choix != "fidélio")
             {
+                Console.WriteLine("Erreur de frappe.Veuillez rentrer une information valide");
+                choix = Console.ReadLine().ToLower();
+            }
+
+          
+                MySqlCommand modification = maConnexion.CreateCommand();
                 switch (choix)
                 {
                     case "nom":
@@ -277,9 +290,6 @@ class Program
                         Console.WriteLine("Erreur, veuillez entrer une information valide");
                         break;
                 }
-                
-            }while(choix != "nom" && choix != "prénom" && choix != "adresse" && choix != "téléphone" && choix != "mail" && choix !="fidélio");
-
             modification.Parameters.AddWithValue("@numClient", numClient);
 
             int rowsAffected = modification.ExecuteNonQuery();
@@ -294,6 +304,7 @@ class Program
             }
 
             maConnexion.Close();
+            modification.Dispose();
         }
         catch (Exception e)
         {
@@ -323,7 +334,7 @@ class Program
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
                     string valueAsString = reader.GetValue(i).ToString();
-                    currentRowAsString += valueAsString + " , ";
+                    currentRowAsString += valueAsString + " | ";
                 }
                 Console.WriteLine(currentRowAsString);
             }
@@ -398,6 +409,72 @@ class Program
     }
     static void Nombre_Clients_Commandes(string CS)
     {
-
+        Console.BackgroundColor = ConsoleColor.DarkBlue;
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine("Nombre des clients avec le cumul de toutes ses commandes en euros");
+        try
+        {
+            //Connexion à la base de données
+            MySqlConnection maConnexion = new MySqlConnection(CS);
+            maConnexion.Open();
+            string requete = "SELECT c.nom, SUM(total_commande) AS total_commande_euros\r\nFROM (\r\n    SELECT \r\n        cmd.ncommande, \r\n        cmd.nclient,\r\n        SUM(m.prix_u * cmd.quantite) AS total_commande\r\n    FROM commande cmd\r\n    JOIN modele m ON cmd.nprod = m.nprod\r\n    GROUP BY cmd.ncommande, cmd.nclient\r\n\r\n    UNION ALL\r\n    \r\n    SELECT \r\n        cmd.ncommande, \r\n        cmd.nclient,\r\n        SUM(p.prix_u_p * cmd.quantite) AS total_commande\r\n    FROM commande cmd\r\n    JOIN pièce p ON cmd.nprod_p = p.nprod_p\r\n    GROUP BY cmd.ncommande, cmd.nclient\r\n) AS total_commandes\r\nJOIN client c ON total_commandes.nclient = c.nclient\r\nGROUP BY c.nom;";
+            MySqlCommand commande = maConnexion.CreateCommand();
+            commande.CommandText = requete;
+            MySqlDataReader reader = commande.ExecuteReader();
+            Console.WriteLine("Nom      Cumul des commandes (en euros)");
+            while (reader.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader.Close();
+            commande.Dispose ();
+            maConnexion.Close();
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine("Erreur : " +e.Message);
+        }
     }
+    static void Produits_Stock(string CS)
+    {
+        Console.BackgroundColor = ConsoleColor.DarkCyan;
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine("Liste des produits ayant une quantité en stock <=2");
+        try
+        {
+            MySqlConnection c = new MySqlConnection(CS);
+            c.Open();
+            string r = "SELECT desc_p, quantité FROM pièce WHERE quantité <=2;";
+            MySqlCommand com = c.CreateCommand();
+            com.CommandText = r;
+            MySqlDataReader reader = com.ExecuteReader();
+            //Console.WriteLine("Liste des pièces ayant une quantité en stock <=2");
+            while (reader.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader.Close();
+            com.Dispose();
+            c.Close();
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Erreur : "+e.Message);
+        }
+    }
+
+
 }
