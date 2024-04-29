@@ -59,7 +59,8 @@ class Program
                     Produits_Stock(CS);
                     break;
                 case 5:
-                    //Pieces_Velos_Fournisseur(CS);
+                    Console.Clear();
+                    Pieces_Velos_Fournisseur(CS);
                     break;
                 case 6:
                     //Chiffre_Affaires(CS);
@@ -451,10 +452,13 @@ class Program
             MySqlConnection c = new MySqlConnection(CS);
             c.Open();
             string r = "SELECT desc_p, quantité FROM pièce WHERE quantité <=2;";
+            string r1 = "SELECT nom, stock FROM modele WHERE stock <=2;";
             MySqlCommand com = c.CreateCommand();
+            MySqlCommand com2 = c.CreateCommand();
             com.CommandText = r;
+            com2.CommandText = r1;
             MySqlDataReader reader = com.ExecuteReader();
-            //Console.WriteLine("Liste des pièces ayant une quantité en stock <=2");
+            Console.WriteLine("Liste des pièces ayant une quantité en stock <=2");
             while (reader.Read())
             {
                 string currentRowAsString = "";
@@ -465,8 +469,24 @@ class Program
                 }
                 Console.WriteLine(currentRowAsString);
             }
+            Console.WriteLine("Liste des vélos ayant une quantité en stock <=2");
             reader.Close();
             com.Dispose();
+            c.Close();
+            c.Open();
+            MySqlDataReader r3 = com2.ExecuteReader();
+            while (r3.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = r3.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            r3.Close();
+            com2.Dispose();
             c.Close();
 
         }
@@ -474,6 +494,10 @@ class Program
         {
             Console.WriteLine("Erreur : "+e.Message);
         }
+    }
+    static void Pieces_Velos_Fournisseur(string CS)
+    {
+
     }
 
 
