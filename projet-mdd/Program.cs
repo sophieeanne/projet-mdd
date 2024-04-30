@@ -16,7 +16,7 @@ class Program
         Console.WriteLine("Bienvenue sur VeloMax. Appuyez sur une touche du clavier pour continuer");
         Console.ReadKey();
         Console.Clear();
-        Console.WriteLine("Voulez-vous accéder à la démo évaluateur de VeloMax, la gestion des tables ou la gestion des stocks ? (1,2,3)");
+        Console.WriteLine("Voulez-vous accéder à : \n1. La démo évaluateur de VeloMax \n2. la gestion des tables \n3. la gestion des stocks ? \n(1,2,3)");
         int choix = Convert.ToInt32(Console.ReadLine());
         switch (choix)
         {
@@ -820,6 +820,17 @@ class Program
         }
     }
 
+
+
+
+
+
+
+
+
+
+    //Demo évaluateur   
+
     static void Demo(string CS)
     {
         string continuer;
@@ -840,38 +851,26 @@ class Program
             {
                 case 1:
                     Console.Clear();
-                    Console.BackgroundColor = ConsoleColor.Blue;
-                    Console.ForegroundColor = ConsoleColor.White;
                     Creation_Client(CS);
                     Console.WriteLine("Appuyez sur une touche pour continuer");
                     Console.ReadKey();  
                     Console.Clear();
-                    Console.BackgroundColor = ConsoleColor.Yellow;
-                    Console.ForegroundColor = ConsoleColor.Black;
                     Modification_Client(CS);
                     Console.WriteLine("Appuyez sur une touche pour continuer");
                     Console.ReadKey();
                     Console.Clear();
-                    Console.BackgroundColor = ConsoleColor.Magenta;
-                    Console.ForegroundColor = ConsoleColor.White;
                     Suppression_Client(CS);
                     break;
                 case 2:
                     Console.Clear();
-                    Console.BackgroundColor = ConsoleColor.Green;
-                    Console.ForegroundColor = ConsoleColor.Black;
                     Nombre_Clients(CS);
                     break;
                 case 3:
                     Console.Clear();
-                    Console.BackgroundColor = ConsoleColor.DarkBlue;
-                    Console.ForegroundColor = ConsoleColor.White;
                     Nombre_Clients_Commandes(CS);
                     break;
                 case 4:
                     Console.Clear();
-                    Console.BackgroundColor = ConsoleColor.DarkCyan;
-                    Console.ForegroundColor = ConsoleColor.White;
                     Produits_Stock(CS);
                     break;
                 case 5:
