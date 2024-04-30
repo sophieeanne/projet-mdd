@@ -10,16 +10,17 @@ class Program
     static void Main()
     {
         string CS = "SERVER=localhost;PORT=3306;DATABASE=VeloMax;UID=root;PASSWORD=root;"; //CS = Connection String
-        Demo(CS);
-    }
-
-    static void Demo(string CS)
-    {
-        string continuer;
         Console.BackgroundColor = ConsoleColor.White;
         Console.ForegroundColor = ConsoleColor.Black;
         Console.WriteLine("Bienvenue sur VeloMax. Appuyez sur une touche du clavier pour continuer");
         Console.ReadKey();
+        Console.Clear();
+        Demo(CS);
+    }
+    static void Demo(string CS)
+    {
+        string continuer;
+        Console.WriteLine("Bienvenue sur la démo évaluateur de VeloMax");
         Console.WriteLine("Voici les différentes fonctionnalités de VeloMax");
         do
         {
@@ -36,26 +37,38 @@ class Program
             {
                 case 1:
                     Console.Clear();
+                    Console.BackgroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = ConsoleColor.White;
                     Creation_Client(CS);
                     Console.WriteLine("Appuyez sur une touche pour continuer");
                     Console.ReadKey();  
                     Console.Clear();
+                    Console.BackgroundColor = ConsoleColor.Yellow;
+                    Console.ForegroundColor = ConsoleColor.Black;
                     Modification_Client(CS);
                     Console.WriteLine("Appuyez sur une touche pour continuer");
                     Console.ReadKey();
                     Console.Clear();
+                    Console.BackgroundColor = ConsoleColor.Magenta;
+                    Console.ForegroundColor = ConsoleColor.White;
                     Suppression_Client(CS);
                     break;
                 case 2:
                     Console.Clear();
+                    Console.BackgroundColor = ConsoleColor.Green;
+                    Console.ForegroundColor = ConsoleColor.Black;
                     Nombre_Clients(CS);
                     break;
                 case 3:
                     Console.Clear();
+                    Console.BackgroundColor = ConsoleColor.DarkBlue;
+                    Console.ForegroundColor = ConsoleColor.White;
                     Nombre_Clients_Commandes(CS);
                     break;
                 case 4:
                     Console.Clear();
+                    Console.BackgroundColor = ConsoleColor.DarkCyan;
+                    Console.ForegroundColor = ConsoleColor.White;
                     Produits_Stock(CS);
                     break;
                 case 5:
@@ -76,8 +89,7 @@ class Program
     }
     static void Creation_Client(string CS)
     {
-        Console.BackgroundColor = ConsoleColor.Blue;
-        Console.ForegroundColor = ConsoleColor.White;
+        
         Console.WriteLine("Création d'un client");
         try
         {
@@ -196,8 +208,7 @@ class Program
     }
     static void Modification_Client(string CS)
     {
-        Console.BackgroundColor = ConsoleColor.Yellow;
-        Console.ForegroundColor = ConsoleColor.Black;
+       
         try
         {
             Console.WriteLine("Modification d'un client");
@@ -316,8 +327,7 @@ class Program
     }
     static void Suppression_Client(string CS)
     {
-        Console.BackgroundColor = ConsoleColor.Magenta;
-        Console.ForegroundColor = ConsoleColor.White;
+     
         Console.WriteLine("Suppression d'un client");
         try
         {
@@ -379,8 +389,7 @@ class Program
     }
     static void Nombre_Clients(string CS)
     {
-        Console.BackgroundColor = ConsoleColor.Green;
-        Console.ForegroundColor = ConsoleColor.Black;
+        
         Console.WriteLine("Afficher le nombre de clients");
         try
         {
@@ -410,8 +419,7 @@ class Program
     }
     static void Nombre_Clients_Commandes(string CS)
     {
-        Console.BackgroundColor = ConsoleColor.DarkBlue;
-        Console.ForegroundColor = ConsoleColor.White;
+     
         Console.WriteLine("Nombre des clients avec le cumul de toutes ses commandes en euros");
         try
         {
@@ -444,9 +452,6 @@ class Program
     }
     static void Produits_Stock(string CS)
     {
-        Console.BackgroundColor = ConsoleColor.DarkCyan;
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine("Liste des produits ayant une quantité en stock <=2");
         try
         {
             MySqlConnection c = new MySqlConnection(CS);
@@ -469,7 +474,7 @@ class Program
                 }
                 Console.WriteLine(currentRowAsString);
             }
-            Console.WriteLine("Liste des vélos ayant une quantité en stock <=2");
+            Console.WriteLine("\nListe des vélos ayant une quantité en stock <=2");
             reader.Close();
             com.Dispose();
             c.Close();
