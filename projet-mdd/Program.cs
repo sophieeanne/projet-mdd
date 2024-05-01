@@ -16,7 +16,8 @@ class Program
         Console.WriteLine("Bienvenue sur VeloMax. Appuyez sur une touche du clavier pour continuer");
         Console.ReadKey();
         Console.Clear();
-        Console.WriteLine("Voulez-vous accéder à : \n1. La démo évaluateur de VeloMax \n2. la gestion des tables \n3. la gestion des stocks ? \n(1,2,3)");
+        Console.WriteLine("Voulez-vous accéder à : \n1. La démo évaluateur de VeloMax \n2. la gestion des tables \n3. la gestion des stocks ");
+        Console.WriteLine("Veuillez entrer le numéro de la démo ou gestion que vous souhaitez utiliser");
         int choix = Convert.ToInt32(Console.ReadLine());
         switch (choix)
         {
@@ -37,14 +38,7 @@ class Program
 
 
 
-
-
-
-
-
-
-
-    //Gestion des tables
+    // Menu Gestion des tables
     static void Gestion_Tables(string CS)
     {
         string continuer;
@@ -70,13 +64,13 @@ class Program
                     Gestion_Boutique(CS);
                     break;
                 case 5:
-                    //Gestion_Modele(CS);
+                    Gestion_Modele(CS);
                     break;
                 case 6:
-                    //Gestion_Piece(CS);
+                    Gestion_Piece(CS);
                     break;
                 case 7:
-                    //Gestion_Vendeur(CS);
+                    Gestion_Vendeur(CS);
                     break;
                 default:
                     Console.WriteLine("Erreur, veuillez entrer un numéro valide");
@@ -86,9 +80,14 @@ class Program
             continuer = Console.ReadLine();
         } while (continuer == "O" || continuer == "o");
     }
+
+
+    //Gestion de client (les fonctions sont dans la démo évaluateur)
     static void Gestion_Client(string CS)
     {
         Console.Clear();
+        Console.BackgroundColor = ConsoleColor.Cyan;
+        Console.ForegroundColor = ConsoleColor.Black;
         Console.WriteLine("Bienvenue sur la gestion de la table client");
         Console.WriteLine("Voici les différentes fonctionnalités de la table client : \n1. Création d'un client \n2. Modification d'un client \n3. Suppression d'un client");
         Console.WriteLine("Veuillez entrer le numéro de la fonctionnalité que vous souhaitez utiliser");
@@ -112,6 +111,10 @@ class Program
                 break;
         }
     }   
+
+
+
+    //Gestion de commande
     static void Gestion_Commande(string CS)
     {
         Console.Clear();
@@ -221,8 +224,8 @@ class Program
                 creation.Parameters.AddWithValue("@dateLivraison", dateLivraison);
                 creation.Parameters.AddWithValue("@quantite", quantite);
                 creation.Parameters.AddWithValue("@numCommande", numCommande);
-                int rowsAffected = creation.ExecuteNonQuery();
-                if (rowsAffected > 0)
+                int lignes = creation.ExecuteNonQuery();
+                if (lignes > 0)
                 {
                     Console.WriteLine("Commande créée");
                 }
@@ -231,6 +234,7 @@ class Program
                     Console.WriteLine("Erreur lors de la création de la commande");
                 }
                 creation.Dispose();
+                maConnexion.Close();
             }
             else
             {
@@ -243,8 +247,8 @@ class Program
                 creation.Parameters.AddWithValue("@dateLivraison", dateLivraison);
                 creation.Parameters.AddWithValue("@quantite", quantite);
                 creation.Parameters.AddWithValue("@numCommande", numCommande);
-                int rowsAffected = creation.ExecuteNonQuery();
-                if (rowsAffected > 0)
+                int lignes = creation.ExecuteNonQuery();
+                if (lignes > 0)
                 {
                     Console.WriteLine("Commande créée");
                 }
@@ -253,6 +257,7 @@ class Program
                     Console.WriteLine("Erreur lors de la création de la commande");
                 }
                 creation.Dispose();
+                maConnexion.Close();
             }
         }
         catch (Exception e)
@@ -261,7 +266,6 @@ class Program
             return;
         }
     }
-
     static void Modification_Commande(string CS)
     {
         try
@@ -348,7 +352,6 @@ class Program
             return;
         }
     }
-
     static void Suppression_Commande(string CS)
     {
         try
@@ -377,8 +380,8 @@ class Program
             int numCommande = Convert.ToInt32(Console.ReadLine());
             suppression.CommandText = "DELETE FROM commande WHERE ncommande = @numCommande";
             suppression.Parameters.AddWithValue("@numCommande", numCommande);
-            int rowsAffected = suppression.ExecuteNonQuery();
-            if (rowsAffected > 0)
+            int lignes = suppression.ExecuteNonQuery();
+            if (lignes > 0)
             {
                 Console.WriteLine("Commande supprimée");
             }
@@ -396,6 +399,9 @@ class Program
         }
     }
 
+
+
+    //Gestion de fournisseur
     static void Gestion_Fournisseur(string CS)
     {
         Console.Clear();
@@ -422,9 +428,9 @@ class Program
                 break;
         }
     }
-
     static void Creation_Fournisseur(string CS)
     {
+        Console.Clear();
         try
         {
             Console.WriteLine("Création d'un fournisseur");
@@ -474,9 +480,9 @@ class Program
             creation.Parameters.AddWithValue("@contact", contact);
             creation.Parameters.AddWithValue("@adresse", adresse);
             creation.Parameters.AddWithValue("@libelle", libelle);
-            int rowsAffected = creation.ExecuteNonQuery();
+            int lignes = creation.ExecuteNonQuery();
                 
-            if (rowsAffected > 0)
+            if (lignes > 0)
             {
                 Console.WriteLine("Fournisseur créé");
             }
@@ -490,9 +496,9 @@ class Program
             Console.WriteLine("Error: " + e.Message);
         }
     }
-
     static void Modification_Fournisseur(string CS)
     {
+        Console.Clear();
         try
         {
             Console.WriteLine("Modification d'un fournisseur");
@@ -557,9 +563,9 @@ class Program
             return;
         }
     }
-
     static void Suppression_Fournisseur(string CS)
     {
+        Console.Clear();
         try
         {
             Console.WriteLine("Suppression d'un fournisseur");
@@ -586,8 +592,8 @@ class Program
             int siret = Convert.ToInt32(Console.ReadLine());
             suppression.CommandText = "DELETE FROM fournisseur WHERE siret = @siret";
             suppression.Parameters.AddWithValue("@siret", siret);
-            int rowsAffected = suppression.ExecuteNonQuery();
-            if (rowsAffected > 0)
+            int lignes = suppression.ExecuteNonQuery();
+            if (lignes > 0)
             {
                 Console.WriteLine("Fournisseur supprimé");
             }
@@ -602,6 +608,10 @@ class Program
             return;
         }
     }
+
+
+
+    //Gestion de boutique
 
     static void Gestion_Boutique(string CS)
     {
@@ -629,9 +639,9 @@ class Program
                 break;
         }
     }
-
     static void Creation_Boutique(string CS)
     {
+        Console.Clear();
         try
         {
             Console.WriteLine("Création d'une boutique");
@@ -686,8 +696,8 @@ class Program
             creation.Parameters.AddWithValue("@courriel", courriel);
             creation.Parameters.AddWithValue("@responsable", responsable);
             creation.Parameters.AddWithValue("@chiffreAffaires", chiffreAffaires);
-            int rowsAffected = creation.ExecuteNonQuery();
-            if (rowsAffected > 0)
+            int lignes = creation.ExecuteNonQuery();
+            if (lignes > 0)
             {
                 Console.WriteLine("Boutique créée");
             }
@@ -706,6 +716,7 @@ class Program
     }
     static void Modification_Boutique(string CS)
     {
+        Console.Clear();
         try
         {
             Console.WriteLine("Modification d'une boutique");
@@ -786,6 +797,7 @@ class Program
     }
     static void Suppression_Boutique(string CS)
     {
+        Console.Clear();
         try
         {
             Console.WriteLine("Suppression d'une boutique");
@@ -813,8 +825,8 @@ class Program
             string nomCompagnie = Console.ReadLine();
             suppression.CommandText = "DELETE FROM boutique WHERE nom_compagnie = @nomCompagnie";
             suppression.Parameters.AddWithValue("@nomCompagnie", nomCompagnie);
-            int rowsAffected = suppression.ExecuteNonQuery();
-            if (rowsAffected > 0)
+            int lignes = suppression.ExecuteNonQuery();
+            if (lignes > 0)
             {
                 Console.WriteLine("Boutique supprimée");
             }
@@ -832,20 +844,815 @@ class Program
 
 
 
+    //Gestion de modèle
+    static void Gestion_Modele(string CS)
+    {
+        Console.Clear();
+        Console.WriteLine("Bienvenue sur la gestion de la table modèle");
+        Console.WriteLine("Voici les différentes fonctionnalités de la table modèle : \n1. Création d'un modèle \n2. Modification d'un modèle \n3. Suppression d'un modèle");
+        Console.WriteLine("Veuillez entrer le numéro de la fonctionnalité que vous souhaitez utiliser");
+        int choix = Convert.ToInt32(Console.ReadLine());
+        switch (choix)
+        {
+            case 1:
+                Creation_Modele(CS);
+                break;
+            case 2:
+                Modification_Modele(CS);
+                break;
+            case 3:
+                Suppression_Modele(CS);
+                break;
+            default:
+                Console.WriteLine("Erreur, veuillez entrer un numéro valide");
+                break;
+        }
+    }
+    static void Creation_Modele(string CS)
+    {
+        Console.Clear();
+        try
+        {
+            Console.WriteLine("Création d'un modèle");
+            MySqlConnection maConnexion = new MySqlConnection(CS);
+            maConnexion.Open();
+            MySqlCommand voir_table = maConnexion.CreateCommand();
+            voir_table.CommandText = "SELECT * FROM modele";
+            MySqlDataReader reader = voir_table.ExecuteReader();
+            Console.WriteLine("Voici la table modèle : \n");
+            Console.WriteLine("nprod nom grandeur prix_u ligne_produit date_intro date_disco stock");
+            while (reader.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader.Close();
+            voir_table.Dispose();
+            int count = 0;
+            int nprod;
+            do
+            {
+                Console.WriteLine("Veuillez entrer le numéro de produit");
+                nprod = Convert.ToInt32(Console.ReadLine());
+                MySqlCommand verif_nprod = maConnexion.CreateCommand();
+                verif_nprod.CommandText = "SELECT COUNT(*) FROM modele WHERE nprod = @nprod";
+                verif_nprod.Parameters.AddWithValue("@nprod", nprod);
+                count = Convert.ToInt32(verif_nprod.ExecuteScalar());
+                if (count > 0)
+                {
+                    Console.WriteLine("Erreur, ce numéro de produit existe déjà");
+                }
+            } while (count > 0);
+            Console.WriteLine("Veuillez entrer le nom du modèle");
+            string nom = Console.ReadLine();
+            Console.WriteLine("Veuillez entrer la grandeur du modèle");
+            string grandeur = Console.ReadLine();
+            Console.WriteLine("Veuillez entrer le prix unitaire du modèle");
+            int prix_u = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Veuillez entrer la ligne de produit du modèle");
+            string ligne_produit = Console.ReadLine();
+            DateTime date_intro = DateTime.Now;
+            Console.WriteLine("Veuillez entrer la date de discontinuation du modèle dans le format AAAA-MM-JJ ");
+            DateTime date_disco = Convert.ToDateTime(Console.ReadLine());
+            Console.WriteLine("Veuillez entrer le stock du modèle");
+            int stock = Convert.ToInt32(Console.ReadLine());
+            MySqlCommand creation = maConnexion.CreateCommand();
+            creation.CommandText = "INSERT INTO modele (nprod, nom, grandeur, prix_u, ligne_produit, date_intro, date_disco, stock) VALUES (@nprod, @nom, @grandeur, @prix_u, @ligne_produit, @date_intro, @date_disco, @stock)";
+            creation.Parameters.AddWithValue("@nprod", nprod);
+            creation.Parameters.AddWithValue("@nom", nom);
+            creation.Parameters.AddWithValue("@grandeur", grandeur);
+            creation.Parameters.AddWithValue("@prix_u", prix_u);
+            creation.Parameters.AddWithValue("@ligne_produit", ligne_produit);
+            creation.Parameters.AddWithValue("@date_intro", date_intro);
+            creation.Parameters.AddWithValue("@date_disco", date_disco);
+            creation.Parameters.AddWithValue("@stock", stock);
+            int lignes = creation.ExecuteNonQuery();
+            if (lignes > 0)
+            {
+                Console.WriteLine("Modèle créé");
+            }
+            else
+            {
+                Console.WriteLine("Erreur lors de la création du modèle");
+            }
+            creation.Dispose();
+            maConnexion.Close();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error: " + e.Message);
+            return;
+        }
+    }
+    static void Modification_Modele(string CS)
+    {
+        Console.Clear();
+        try
+        {
+            Console.WriteLine("Modification d'un modèle");
+            MySqlConnection maConnexion = new MySqlConnection(CS);
+            maConnexion.Open();
+            MySqlCommand voir_table = maConnexion.CreateCommand();
+            voir_table.CommandText = "SELECT * FROM modele";
+            MySqlDataReader reader = voir_table.ExecuteReader();
+            Console.WriteLine("Voici la table modèle : \n");
+            Console.WriteLine("nprod nom grandeur prix_u ligne_produit date_intro date_disco stock");
+            while (reader.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader.Close();
+            voir_table.Dispose();
+            MySqlCommand modification = maConnexion.CreateCommand();
+            Console.WriteLine("Quelle information voulez-vous modifier ? (nom, grandeur, prix unitaire, ligne de produit, date d'introduction, date de discontinuation, stock)");
+            string choix = Console.ReadLine();
+            while (choix != "nom" && choix != "grandeur" && choix != "prix unitaire" && choix != "ligne de produit" && choix != "date d'introduction" && choix != "date de discontinuation" && choix != "stock")
+            {
+                Console.WriteLine("Erreur de frappe.Veuillez rentrer une information valide");
+                choix = Console.ReadLine().ToLower();
+            }
+            switch (choix)
+            {
+                case "nom":
+                    Console.WriteLine("Veuillez entrer le nouveau nom");
+                    string nom = Console.ReadLine();
+                    modification.CommandText = "UPDATE modele SET nom = @nom WHERE nprod = @nprod";
+                    modification.Parameters.AddWithValue("@nom", nom);
+                    Console.WriteLine("Nom modifié");
+                    break;
+                case "grandeur":
+                    Console.WriteLine("Veuillez entrer la nouvelle grandeur");
+                    string grandeur = Console.ReadLine();
+                    modification.CommandText = "UPDATE modele SET grandeur = @grandeur WHERE nprod = @nprod";
+                    modification.Parameters.AddWithValue("@grandeur", grandeur);
+                    Console.WriteLine("Grandeur modifiée");
+                    break;
+                case "prix unitaire":
+                    Console.WriteLine("Veuillez entrer le nouveau prix unitaire");
+                    int prix_u = Convert.ToInt32(Console.ReadLine());
+                    modification.CommandText = "UPDATE modele SET prix_u = @prix_u WHERE nprod = @nprod";
+                    modification.Parameters.AddWithValue("@prix_u", prix_u);
+                    Console.WriteLine("Prix unitaire modifié");
+                    break;
+                case "ligne de produit":
+                    Console.WriteLine("Veuillez entrer la nouvelle ligne de produit");
+                    string ligne_produit = Console.ReadLine();
+                    modification.CommandText = "UPDATE modele SET ligne_produit = @ligne_produit WHERE nprod = @nprod";
+                    modification.Parameters.AddWithValue("@ligne_produit", ligne_produit);
+                    Console.WriteLine("Ligne de produit modifiée");
+                    break;
+                case "date d'introduction":
+                    Console.WriteLine("Veuillez entrer la nouvelle date d'introduction");
+                    DateTime date_intro = Convert.ToDateTime(Console.ReadLine());
+                    modification.CommandText = "UPDATE modele SET date_intro = @date_intro WHERE nprod = @nprod";
+                    modification.Parameters.AddWithValue("@date_intro", date_intro);
+                    Console.WriteLine("Date d'introduction modifiée");
+                    break;
+                case "date de discontinuation":
+                    Console.WriteLine("Veuillez entrer la nouvelle date de discontinuation");
+                    DateTime date_disco = Convert.ToDateTime(Console.ReadLine());
+                    modification.CommandText = "UPDATE modele SET date_disco = @date_disco WHERE nprod = @nprod";
+                    modification.Parameters.AddWithValue("@date_disco", date_disco);
+                    Console.WriteLine("Date de discontinuation modifiée");
+                    break;
+                case "stock":
+                    Console.WriteLine("Veuillez entrer le nouveau stock");
+                    int stock = Convert.ToInt32(Console.ReadLine());
+                    modification.CommandText = "UPDATE modele SET stock = @stock WHERE nprod = @nprod";
+                    modification.Parameters.AddWithValue("@stock", stock);
+                    Console.WriteLine("Stock modifié");
+                    break;
+                default:
+                    Console.WriteLine("Erreur, veuillez entrer une information valide");
+                    break;
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error: " + e.Message);
+            return;
+        }
+    }
+    static void Suppression_Modele(string CS)
+    {
+        Console.Clear();
+        try
+        {
+            Console.WriteLine("Suppression d'un modèle");
+            MySqlConnection maConnexion = new MySqlConnection(CS);
+            maConnexion.Open();
+            MySqlCommand voir_table = maConnexion.CreateCommand();
+            voir_table.CommandText = "SELECT * FROM modele";
+            MySqlDataReader reader = voir_table.ExecuteReader();
+            Console.WriteLine("Voici la table modèle : \n");
+            Console.WriteLine("nprod nom grandeur prix_u ligne_produit date_intro date_disco stock");
+            while (reader.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader.Close();
+            voir_table.Dispose();
+            MySqlCommand suppression = maConnexion.CreateCommand();
+            Console.WriteLine("Veuillez entrer le numéro de produit du modèle à supprimer");
+            int nprod = Convert.ToInt32(Console.ReadLine());
+            suppression.CommandText = "DELETE FROM modele WHERE nprod = @nprod";
+            suppression.Parameters.AddWithValue("@nprod", nprod);
+            int lignes = suppression.ExecuteNonQuery();
+            if (lignes > 0)
+            {
+                Console.WriteLine("Modèle supprimé");
+            }
+            else
+            {
+                Console.WriteLine("Erreur lors de la suppression du modèle");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error: " + e.Message);
+            return;
+        }
+    }
+
+
+
+    //Gestion de pièce
+    static void Gestion_Piece(string CS)
+    {
+        Console.Clear();
+        Console.WriteLine("Bienvenue sur la gestion de la table pièce");
+        Console.WriteLine("Voici les différentes fonctionnalités de la table pièce : \n1. Création d'une pièce \n2. Modification d'une pièce \n3. Suppression d'une pièce");
+        Console.WriteLine("Veuillez entrer le numéro de la fonctionnalité que vous souhaitez utiliser");
+        int choix = Convert.ToInt32(Console.ReadLine());
+        switch (choix)
+        {
+            case 1:
+                Creation_Piece(CS);
+                break;
+            case 2:
+                Modification_Piece(CS);
+                break;
+            case 3:
+                Suppression_Piece(CS);
+                break;
+            default:
+                Console.WriteLine("Erreur, veuillez entrer un numéro valide");
+                break;
+        }
+    }
+    static void Creation_Piece(string CS)
+    {
+        Console.Clear();
+        try
+        {
+            Console.WriteLine("Création d'une pièce");
+            MySqlConnection maConnexion = new MySqlConnection(CS);
+            maConnexion.Open();
+            MySqlCommand voir_table = maConnexion.CreateCommand();
+            voir_table.CommandText = "SELECT * FROM piece";
+            MySqlDataReader reader = voir_table.ExecuteReader();
+            Console.WriteLine("Voici la table pièce : \n");
+            Console.WriteLine("nprod_p desc_p nom_f nprod_f prix_u_p date_intro date_disco delai quantité");
+            while (reader.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader.Close();
+            voir_table.Dispose();
+
+            MySqlCommand voirtablefournisseur = maConnexion.CreateCommand();
+            voirtablefournisseur.CommandText = "SELECT siret, contact  FROM fournisseur";
+            MySqlDataReader readerfournisseur = voirtablefournisseur.ExecuteReader();
+            Console.WriteLine("Pour réference, voici les numéros sirets et les nom des fournisseurs existants \n");
+            while(readerfournisseur.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < readerfournisseur.FieldCount; i++)
+                {
+                    string valueAsString = readerfournisseur.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + "  ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            readerfournisseur.Close();
+            voirtablefournisseur.Dispose();
+
+            Console.WriteLine("Veuillez entrer le numéro de produit de la pièce");
+            int nprod_p = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Veuillez entrer la description de la pièce");
+            string desc_p = Console.ReadLine();
+            Console.WriteLine("Veuillez entrer le nom du fournisseur de la pièce");
+            string nom_f = Console.ReadLine();
+            Console.WriteLine("Veuillez entrer le numéro siret du fournisseur de la pièce");
+            int nprod_f = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Veuillez entrer le prix unitaire de la pièce");
+            int prix_u_p = Convert.ToInt32(Console.ReadLine());
+            DateTime date_intro = DateTime.Now;
+            Console.WriteLine("Veuillez entrer la date de discontinuation de la pièce dans le format AAAA-MM-JJ ");
+            DateTime date_disco = Convert.ToDateTime(Console.ReadLine());
+            Console.WriteLine("Veuillez entrer le délai de livraison de la pièce");
+            int delai = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Veuillez entrer la quantité de la pièce");
+            int quantite = Convert.ToInt32(Console.ReadLine());
+            MySqlCommand creation = maConnexion.CreateCommand();
+            creation.CommandText = "INSERT INTO piece (nprod_p, desc_p, nom_f, nprod_f, prix_u_p, date_intro, date_disco, delai, quantité) VALUES (@nprod_p, @desc_p, @nom_f, @nprod_f, @prix_u_p, @date_intro, @date_disco, @delai, @quantite)";
+            creation.Parameters.AddWithValue("@nprod_p", nprod_p);
+            creation.Parameters.AddWithValue("@desc_p", desc_p);
+            creation.Parameters.AddWithValue("@nom_f", nom_f);
+            creation.Parameters.AddWithValue("@nprod_f", nprod_f);
+            creation.Parameters.AddWithValue("@prix_u_p", prix_u_p);
+            creation.Parameters.AddWithValue("@date_intro", date_intro);
+            creation.Parameters.AddWithValue("@date_disco", date_disco);
+            creation.Parameters.AddWithValue("@delai", delai);
+            creation.Parameters.AddWithValue("@quantite", quantite);
+            int lignes = creation.ExecuteNonQuery();
+            if (lignes > 0)
+            {
+                Console.WriteLine("Pièce créée");
+            }
+            else
+            {
+                Console.WriteLine("Erreur lors de la création de la pièce");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error: " + e.Message);
+            return;
+        }
+    }
+    static void Modification_Piece(string CS)
+    {
+        Console.Clear();
+        try
+        {
+            Console.WriteLine("Modification d'une pièce");
+            MySqlConnection maConnexion = new MySqlConnection(CS);
+            maConnexion.Open();
+            MySqlCommand voir_table = maConnexion.CreateCommand();
+            voir_table.CommandText = "SELECT * FROM piece";
+            MySqlDataReader reader = voir_table.ExecuteReader();
+            Console.WriteLine("Voici la table pièce : \n");
+            Console.WriteLine("nprod_p desc_p nom_f nprod_f prix_u_p date_intro date_disco delai quantité");
+            while (reader.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader.Close();
+            voir_table.Dispose();
+            MySqlCommand modification = maConnexion.CreateCommand();
+            Console.WriteLine("Quelle information voulez-vous modifier ? (description, nom du fournisseur, prix unitaire, date d'introduction, date de discontinuation, delai, quantité)");
+            string choix = Console.ReadLine();
+            while (choix != "description" && choix != "nom du fournisseur" && choix != "prix unitaire" && choix != "date d'introduction" && choix != "date de discontinuation" && choix != "delai" && choix != "quantité")
+            {
+                Console.WriteLine("Erreur de frappe.Veuillez rentrer une information valide");
+                choix = Console.ReadLine().ToLower();
+            }
+            switch (choix)
+            {
+                case "description":
+                    Console.WriteLine("Veuillez entrer la nouvelle description");
+                    string desc_p = Console.ReadLine();
+                    modification.CommandText = "UPDATE piece SET desc_p = @desc_p WHERE nprod_p = @nprod_p";
+                    modification.Parameters.AddWithValue("@desc_p", desc_p);
+                    Console.WriteLine("Description modifiée");
+                    break;
+                case "nom du fournisseur":
+                    Console.WriteLine("Veuillez entrer le nouveau nom du fournisseur");
+                    string nom_f = Console.ReadLine();
+                    modification.CommandText = "UPDATE piece SET nom_f = @nom_f WHERE nprod_p = @nprod_p";
+                    modification.Parameters.AddWithValue("@nom_f", nom_f);
+                    Console.WriteLine("Nom du fournisseur modifié");
+                    break;
+                case "prix unitaire":
+                    Console.WriteLine("Veuillez entrer le nouveau prix unitaire");
+                    int prix_u_p = Convert.ToInt32(Console.ReadLine());
+                    modification.CommandText = "UPDATE piece SET prix_u_p = @prix_u_p WHERE nprod_p = @nprod_p";
+                    modification.Parameters.AddWithValue("@prix_u_p", prix_u_p);
+                    Console.WriteLine("Prix unitaire modifié");
+                    break;
+                case "date d'introduction":
+                    Console.WriteLine("Veuillez entrer la nouvelle date d'introduction");
+                    DateTime date_intro = Convert.ToDateTime(Console.ReadLine());
+                    modification.CommandText = "UPDATE piece SET date_intro = @date_intro WHERE nprod_p = @nprod_p";
+                    modification.Parameters.AddWithValue("@date_intro", date_intro);
+                    Console.WriteLine("Date d'introduction modifiée");
+                    break;
+                case "date de discontinuation":
+                    Console.WriteLine("Veuillez entrer la nouvelle date de discontinuation");
+                    DateTime date_disco = Convert.ToDateTime(Console.ReadLine());
+                    modification.CommandText = "UPDATE piece SET date_disco = @date_disco WHERE nprod_p = @nprod_p";
+                    modification.Parameters.AddWithValue("@date_disco", date_disco);
+                    Console.WriteLine("Date de discontinuation modifiée");
+                    break;
+                case "delai":
+                    Console.WriteLine("Veuillez entrer le nouveau délai");
+                    int delai = Convert.ToInt32(Console.ReadLine());
+                    modification.CommandText = "UPDATE piece SET delai = @delai WHERE nprod_p = @nprod_p";
+                    modification.Parameters.AddWithValue("@delai", delai);
+                    Console.WriteLine("Délai modifié");
+                    break;
+                case "quantité":
+                    Console.WriteLine("Veuillez entrer la nouvelle quantité");
+                    int quantite = Convert.ToInt32(Console.ReadLine());
+                    modification.CommandText = "UPDATE piece SET quantité = @quantite WHERE nprod_p = @nprod_p";
+                    modification.Parameters.AddWithValue("@quantite", quantite);
+                    Console.WriteLine("Quantité modifiée");
+                    break;
+                default:
+                    Console.WriteLine("Erreur, veuillez entrer une information valide");
+                    break;
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error: " + e.Message);
+            return;
+        }
+    }
+    static void Suppression_Piece(string CS)
+    {
+        Console.Clear();
+        try
+        {
+            Console.WriteLine("Suppression d'une pièce");   
+            MySqlConnection maConnexion = new MySqlConnection(CS);
+            maConnexion.Open();
+            MySqlCommand voir_table = maConnexion.CreateCommand();
+            voir_table.CommandText = "SELECT * FROM piece";
+            MySqlDataReader reader = voir_table.ExecuteReader();
+            Console.WriteLine("Voici la table pièce : \n");
+            Console.WriteLine("nprod_p desc_p nom_f nprod_f prix_u_p date_intro date_disco delai quantité");
+            while (reader.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader.Close();
+            voir_table.Dispose();
+            MySqlCommand suppression = maConnexion.CreateCommand();
+            Console.WriteLine("Veuillez entrer le numéro de produit de la pièce à supprimer");
+            int nprod_p = Convert.ToInt32(Console.ReadLine());
+            suppression.CommandText = "DELETE FROM piece WHERE nprod_p = @nprod_p";
+            suppression.Parameters.AddWithValue("@nprod_p", nprod_p);
+            int lignes = suppression.ExecuteNonQuery();
+            if (lignes > 0)
+            {
+                Console.WriteLine("Pièce supprimée");
+            }
+            else
+            {
+                Console.WriteLine("Erreur lors de la suppression de la pièce");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error: " + e.Message);
+            return;
+        }
+    }
+
+
+    //Gestion vendeur
+    static void Gestion_Vendeur(string CS)
+    {
+        Console.Clear();
+        Console.WriteLine("Bienvenue sur la gestion de la table vendeur");
+        Console.WriteLine("Voici les différentes fonctionnalités de la table vendeur : \n1. Création d'un vendeur \n2. Modification d'un vendeur \n3. Suppression d'un vendeur");
+        Console.WriteLine("Veuillez entrer le numéro de la fonctionnalité que vous souhaitez utiliser");
+        int choix = Convert.ToInt32(Console.ReadLine());
+        switch (choix)
+        {
+            case 1:
+                Creation_Vendeur(CS);
+                break;
+            case 2:
+                Modification_Vendeur(CS);
+                break;
+            case 3:
+                Suppression_Vendeur(CS);
+                break;
+            default:
+                Console.WriteLine("Erreur, veuillez entrer un numéro valide");
+                break;
+        }
+
+    }
+    static void Creation_Vendeur(string CS)
+    {
+        Console.Clear();
+        try
+        {
+            Console.WriteLine("Création d'un vendeur");
+            MySqlConnection maConnexion = new MySqlConnection(CS);
+            maConnexion.Open();
+            MySqlCommand voir_table = maConnexion.CreateCommand();
+            voir_table.CommandText = "SELECT * FROM vendeur";
+            MySqlDataReader reader = voir_table.ExecuteReader();
+            Console.WriteLine("Voici la table vendeur : \n");
+            Console.WriteLine("nvendeur nomv prenomv numerov emailv boutique ventes satisfaction_client");
+            while (reader.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader.Close();
+            voir_table.Dispose();
+            int count = 0;
+            int nvendeur;
+            do
+            {
+                Console.WriteLine("Veuillez entrer le numéro de vendeur");
+                nvendeur = Convert.ToInt32(Console.ReadLine());
+                MySqlCommand verif_nvendeur = maConnexion.CreateCommand();
+                verif_nvendeur.CommandText = "SELECT COUNT(*) FROM vendeur WHERE nvendeur = @nvendeur";
+                verif_nvendeur.Parameters.AddWithValue("@nvendeur", nvendeur);
+                count = Convert.ToInt32(verif_nvendeur.ExecuteScalar());
+                if (count > 0)
+                {
+                    Console.WriteLine("Erreur, ce numéro de vendeur existe déjà");
+                }
+            } while (count > 0);
+            Console.WriteLine("Veuillez entrer le nom du vendeur");
+            string nomv = Console.ReadLine();
+            Console.WriteLine("Veuillez entrer le prénom du vendeur");
+            string prenomv = Console.ReadLine();
+            Console.WriteLine("Veuillez entrer le numéro de téléphone du vendeur");
+            string numerov = Console.ReadLine();
+            Console.WriteLine("Veuillez entrer l'adresse mail du vendeur");
+            string emailv = Console.ReadLine();
+            Console.WriteLine("Veuillez entrer le nom de la boutique du vendeur");
+            Console.WriteLine("Pour réference, voici les noms des boutiques\n");
+            MySqlCommand voir_table_boutique = maConnexion.CreateCommand();
+            voir_table_boutique.CommandText = "SELECT nom_compagnie FROM boutique";
+            MySqlDataReader reader_boutique = voir_table_boutique.ExecuteReader();
+            while (reader_boutique.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader_boutique.FieldCount; i++)
+                {
+                    string valueAsString = reader_boutique.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + "  ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader_boutique.Close();
+            voir_table_boutique.Dispose();
+            string boutique = Console.ReadLine();
+            Console.WriteLine("Veuillez entrer le nombre de ventes du vendeur");
+            int ventes = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Veuillez entrer la satisfaction client du vendeur");
+            int satisfaction_client = Convert.ToInt32(Console.ReadLine());
+            while(satisfaction_client < 1 || satisfaction_client > 5)
+            {
+                Console.WriteLine("Erreur, veuillez entrer une satisfaction client entre 0 et 10");
+                satisfaction_client = Convert.ToInt32(Console.ReadLine());
+            }
+            MySqlCommand creation = maConnexion.CreateCommand();
+
+            creation.CommandText = "INSERT INTO vendeur (nvendeur, nomv, prenomv, numerov, emailv, boutique, ventes, satisfaction_client) VALUES (@nvendeur, @nomv, @prenomv, @numerov, @emailv, @boutique, @ventes, @satisfaction_client)";
+            creation.Parameters.AddWithValue("@nvendeur", nvendeur);
+            creation.Parameters.AddWithValue("@nomv", nomv);
+            creation.Parameters.AddWithValue("@prenomv", prenomv);
+            creation.Parameters.AddWithValue("@numerov", numerov);
+            creation.Parameters.AddWithValue("@emailv", emailv);
+            creation.Parameters.AddWithValue("@boutique", boutique);
+            creation.Parameters.AddWithValue("@ventes", ventes);
+            creation.Parameters.AddWithValue("@satisfaction_client", satisfaction_client);
+            int lignes = creation.ExecuteNonQuery();
+            if (lignes > 0)
+            {
+                Console.WriteLine("Vendeur créé");
+            }
+            else
+            {
+                Console.WriteLine("Erreur lors de la création du vendeur");
+            }
+            creation.Dispose();
+            maConnexion.Close();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error: " + e.Message);
+            return;
+        }
+    }
+    static void Modification_Vendeur(string CS)
+    {
+        Console.Clear();
+        try
+        {
+            Console.WriteLine("Modification d'un vendeur");
+            MySqlConnection maConnexion = new MySqlConnection(CS);
+            maConnexion.Open();
+            MySqlCommand voir_table = maConnexion.CreateCommand();
+            voir_table.CommandText = "SELECT * FROM vendeur";
+            MySqlDataReader reader = voir_table.ExecuteReader();
+            Console.WriteLine("Voici la table vendeur : \n");
+            Console.WriteLine("nvendeur nomv prenomv numerov emailv boutique ventes satisfaction_client");
+            while (reader.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader.Close();
+            voir_table.Dispose();
+            MySqlCommand modification = maConnexion.CreateCommand();
+            Console.WriteLine("Quelle information voulez-vous modifier ? (nom, prénom, numéro de téléphone, email, boutique, ventes, satisfaction client)");
+            string choix = Console.ReadLine();
+            while (choix != "nom" && choix != "prénom" && choix != "numéro de téléphone" && choix != "email" && choix != "boutique" && choix != "ventes" && choix != "satisfaction client")
+            {
+                Console.WriteLine("Erreur de frappe.Veuillez rentrer une information valide");
+                choix = Console.ReadLine().ToLower();
+            }
+            switch (choix)
+            {
+                case "nom":
+                    Console.WriteLine("Veuillez entrer le nouveau nom");
+                    string nomv = Console.ReadLine();
+                    modification.CommandText = "UPDATE vendeur SET nomv = @nomv WHERE nvendeur = @nvendeur";
+                    modification.Parameters.AddWithValue("@nomv", nomv);
+                    Console.WriteLine("Nom modifié");
+                    break;
+                case "prénom":
+                    Console.WriteLine("Veuillez entrer le nouveau prénom");
+                    string prenomv = Console.ReadLine();
+                    modification.CommandText = "UPDATE vendeur SET prenomv = @prenomv WHERE nvendeur = @nvendeur";
+                    modification.Parameters.AddWithValue("@prenomv", prenomv);
+                    Console.WriteLine("Prénom modifié");
+                    break;
+                case "numéro de téléphone":
+                    Console.WriteLine("Veuillez entrer le nouveau numéro de téléphone");
+                    string numerov = Console.ReadLine();
+                    modification.CommandText = "UPDATE vendeur SET numerov = @numerov WHERE nvendeur = @nvendeur";
+                    modification.Parameters.AddWithValue("@numerov", numerov);
+                    Console.WriteLine("Numéro de téléphone modifié");
+                    break;
+                case "email":
+                    Console.WriteLine("Veuillez entrer le nouvel email");
+                    string emailv = Console.ReadLine();
+                    modification.CommandText = "UPDATE vendeur SET emailv = @emailv WHERE nvendeur = @nvendeur";
+                    modification.Parameters.AddWithValue("@emailv", emailv);
+                    Console.WriteLine("Email modifié");
+                    break;
+                case "boutique":
+                    Console.WriteLine("Veuillez entrer la nouvelle boutique");
+                    Console.WriteLine("Pour réference, voici les noms des boutiques\n");
+                    MySqlCommand voir_table_boutique = maConnexion.CreateCommand();
+                    voir_table_boutique.CommandText = "SELECT nom_compagnie FROM boutique";
+                    MySqlDataReader reader_boutique = voir_table_boutique.ExecuteReader();
+                    while (reader_boutique.Read())
+                    {
+                        string currentRowAsString = "";
+                        for (int i = 0; i < reader_boutique.FieldCount; i++)
+                        {
+                            string valueAsString = reader_boutique.GetValue(i).ToString();
+                            currentRowAsString += valueAsString + "  ";
+                        }
+                        Console.WriteLine(currentRowAsString);
+                    }
+                    reader_boutique.Close();
+                    voir_table_boutique.Dispose();
+                    string boutique = Console.ReadLine();
+                    modification.CommandText = "UPDATE vendeur SET boutique = @boutique WHERE nvendeur = @nvendeur";
+                    modification.Parameters.AddWithValue("@boutique", boutique);
+                    Console.WriteLine("Boutique modifiée");
+                    break;
+                case "ventes":
+                    Console.WriteLine("Veuillez entrer le nouveau nombre de ventes");
+                    int ventes = Convert.ToInt32(Console.ReadLine());
+                    modification.CommandText = "UPDATE vendeur SET ventes = @ventes WHERE nvendeur = @nvendeur";
+                    modification.Parameters.AddWithValue("@ventes", ventes);
+                    Console.WriteLine("Nombre de ventes modifié");
+                    break;
+                case "satisfaction client":
+                    Console.WriteLine("Veuillez entrer la nouvelle satisfaction client");
+                    int satisfaction_client = Convert.ToInt32(Console.ReadLine());
+                    while (satisfaction_client < 1 || satisfaction_client > 5)
+                    {
+                        Console.WriteLine("Erreur, veuillez entrer une satisfaction client entre 0 et 10");
+                        satisfaction_client = Convert.ToInt32(Console.ReadLine());
+                    }
+                    modification.CommandText = "UPDATE vendeur SET satisfaction_client = @satisfaction_client WHERE nvendeur = @nvendeur";
+                    modification.Parameters.AddWithValue("@satisfaction_client", satisfaction_client);
+                    Console.WriteLine("Satisfaction client modifiée");
+                    break;
+                default:
+                    Console.WriteLine("Erreur, veuillez entrer une information valide");
+                    break;
+                modification.Dispose();
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error: " + e.Message);
+            return;
+        }
+    }
+    static void Suppression_Vendeur(string CS)
+    {
+        Console.Clear();
+        try
+        {
+            Console.WriteLine("Suppression d'un vendeur");
+            MySqlConnection maConnexion = new MySqlConnection(CS);
+            maConnexion.Open();
+            MySqlCommand voir_table = maConnexion.CreateCommand();
+            voir_table.CommandText = "SELECT * FROM vendeur";
+            MySqlDataReader reader = voir_table.ExecuteReader();
+            Console.WriteLine("Voici la table vendeur : \n");
+            Console.WriteLine("nvendeur nomv prenomv numerov emailv boutique ventes satisfaction_client");
+            while (reader.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader.Close();
+            voir_table.Dispose();
+            MySqlCommand suppression = maConnexion.CreateCommand();
+            Console.WriteLine("Veuillez entrer le numéro de vendeur à supprimer");
+            int nvendeur = Convert.ToInt32(Console.ReadLine());
+            suppression.CommandText = "DELETE FROM vendeur WHERE nvendeur = @nvendeur";
+            suppression.Parameters.AddWithValue("@nvendeur", nvendeur);
+            int lignes = suppression.ExecuteNonQuery();
+            if (lignes > 0)
+            {
+                Console.WriteLine("Vendeur supprimé");
+            }
+            else
+            {
+                Console.WriteLine("Erreur lors de la suppression du vendeur");
+            }
+            suppression.Dispose();
+            maConnexion.Close();
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine("Error: " + e.Message);
+            return;
+        }   
+    }
 
 
 
 
 
 
-
-    //Demo évaluateur   
-
+    //Demo évaluateur (finie et fonctionnelle)
     static void Demo(string CS)
     {
         string continuer;
         Console.WriteLine("Bienvenue sur la démo évaluateur de VeloMax");
-        Console.WriteLine("Voici les différentes fonctionnalités de VeloMax");
+        Console.WriteLine("Voici les différentes fonctionnalités de cette démo");
         do
         {
             Console.Clear();
@@ -888,13 +1695,14 @@ class Program
                     Pieces_Velos_Fournisseur(CS);
                     break;
                 case 6:
-                    //Chiffre_Affaires(CS);
+                    Console.Clear();
+                    Chiffre_Affaires(CS);
                     break;
                 default:
                     Console.WriteLine("Erreur, veuillez entrer un numéro valide");
                     break;
             }
-            Console.WriteLine("Voulez-vous continuer ? (O/N)");
+            Console.WriteLine("\nVoulez-vous continuer ? (O/N)");
             continuer = Console.ReadLine();
         }while(continuer == "O" || continuer == "o");
       
@@ -969,6 +1777,25 @@ class Program
                 fidelioClient = Convert.ToInt32(f);
             }
 
+            DateTime? dateexpiration = DateTime.Now;
+            if (fidelioClient == 1)
+            {
+                dateexpiration = dateexpiration.Value.AddYears(1);
+            }
+            else if (fidelioClient == 2 || fidelioClient == 3)
+            {
+                dateexpiration = dateexpiration.Value.AddYears(2);
+            }
+            else if (fidelioClient == 4)
+            {
+                dateexpiration = dateexpiration.Value.AddYears(3);
+            }
+            else
+            {
+                dateexpiration = null;
+            }
+
+
 
             //On crée les paramètres pour la requête
             MySqlParameter numClientParam = new MySqlParameter("@numClient", MySqlDbType.Int32);
@@ -984,6 +1811,8 @@ class Program
             MySqlParameter mailClientParam = new MySqlParameter("@mailClient", MySqlDbType.String);
             mailClientParam.Value = mailClient;
             MySqlParameter fidelioClientParam = new MySqlParameter("@fidelioClient",MySqlDbType.Int32);
+            MySqlParameter dateexpirationParam = new MySqlParameter("@dateexpiration", MySqlDbType.DateTime);
+            dateexpirationParam.Value = dateexpiration;
 
             //On crée la commande
             MySqlCommand creation = maConnexion.CreateCommand();
@@ -994,13 +1823,14 @@ class Program
             creation.Parameters.Add(telClientParam);
             creation.Parameters.Add(mailClientParam);
             creation.Parameters.Add(fidelioClientParam);
+            creation.Parameters.Add(dateexpirationParam);
 
-            creation.CommandText = "INSERT INTO client (nclient, nom, prenom, adresse, telephone, courriel, fidelio) VALUES (@numClient, @nomClient, @prenomClient, @adresseClient, @telClient, @mailClient, @fidelioClient)";
+            creation.CommandText = "INSERT INTO client (nclient, nom, prenom, adresse, telephone, courriel, fidelio, expiration_fidélio) VALUES (@numClient, @nomClient, @prenomClient, @adresseClient, @telClient, @mailClient, @fidelioClient, @dateexpiration)";
 
             //On exécute la commande
-            int rowsAffected = creation.ExecuteNonQuery();
+            int lignes = creation.ExecuteNonQuery();
 
-            if (rowsAffected > 0)
+            if (lignes > 0)
             {
                 Console.WriteLine("Client créé");
             }
@@ -1038,7 +1868,7 @@ class Program
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
                     string valueAsString = reader.GetValue(i).ToString();
-                    currentRowAsString += valueAsString + " , ";
+                    currentRowAsString += valueAsString + " | ";
                 }
                 Console.WriteLine(currentRowAsString);
             }
@@ -1107,8 +1937,28 @@ class Program
                         {
                             fidelioClient = Convert.ToInt32(f);
                         }
-                        modification.CommandText = "UPDATE client SET fidelio = @fidelioClient WHERE nclient = @numClient";
+                        DateTime? dateexpiration = DateTime.Now;
+                        if (fidelioClient == 1)
+                        {
+                            dateexpiration = dateexpiration.Value.AddYears(1);
+                        }
+                        else if (fidelioClient == 2 || fidelioClient == 3)
+                        {
+                            dateexpiration = dateexpiration.Value.AddYears(2);
+                        }
+                        else if (fidelioClient == 4)
+                        {
+                            dateexpiration = dateexpiration.Value.AddYears(3);
+                        }
+                        else
+                        {
+                            dateexpiration = null;
+                        }
+        
+                        modification.CommandText = "UPDATE client SET fidelio = @fidelioClient, expiration_fidélio = @dateexpiration WHERE nclient = @numClient";
+                        
                         modification.Parameters.AddWithValue("@fidelioClient", fidelioClient);
+                        modification.Parameters.AddWithValue("@dateexpiration", dateexpiration);
                         break;
                     default:
                         Console.WriteLine("Erreur, veuillez entrer une information valide");
@@ -1116,9 +1966,9 @@ class Program
                 }
             modification.Parameters.AddWithValue("@numClient", numClient);
 
-            int rowsAffected = modification.ExecuteNonQuery();
+            int lignes = modification.ExecuteNonQuery();
 
-            if (rowsAffected > 0)
+            if (lignes > 0)
             {
                 Console.WriteLine("L'information du client a été modifiée !");
             }
@@ -1178,9 +2028,9 @@ class Program
             suppression.CommandText = "DELETE FROM client WHERE nclient = @numClient";
 
             //On exécute la commande
-            int rowsAffected = suppression.ExecuteNonQuery();
+            int lignes = suppression.ExecuteNonQuery();
 
-            if (rowsAffected > 0)
+            if (lignes > 0)
             {
                 Console.WriteLine("Client supprimé");
             }
@@ -1266,6 +2116,7 @@ class Program
     {
         try
         {
+            Console.WriteLine("Liste des produits ayant une quantité en stock <=2");
             MySqlConnection c = new MySqlConnection(CS);
             c.Open();
             string r = "SELECT desc_p, quantité FROM pièce WHERE quantité <=2;";
@@ -1275,7 +2126,8 @@ class Program
             com.CommandText = r;
             com2.CommandText = r1;
             MySqlDataReader reader = com.ExecuteReader();
-            Console.WriteLine("Liste des pièces ayant une quantité en stock <=2");
+            Console.WriteLine("\nListe des pièces ayant une quantité en stock <=2");
+            Console.WriteLine("Nom de la pièce | Quantité en stock");
             while (reader.Read())
             {
                 string currentRowAsString = "";
@@ -1292,6 +2144,7 @@ class Program
             c.Close();
             c.Open();
             MySqlDataReader r3 = com2.ExecuteReader();
+            Console.WriteLine("Nom du vélo | Quantité en stock");
             while (r3.Read())
             {
                 string currentRowAsString = "";
@@ -1314,7 +2167,84 @@ class Program
     }
     static void Pieces_Velos_Fournisseur(string CS)
     {
+        try
+        {
+            MySqlConnection c = new MySqlConnection(CS);
+            c.Open();
+            string r = "SELECT contact, COUNT(*) nprod_f\r\nFROM pièce JOIN fournisseur\r\nON nprod_f = siret\r\nGROUP BY contact;";
+            MySqlCommand commande = c.CreateCommand();
+            commande.CommandText = r;
+            MySqlDataReader reader = commande.ExecuteReader();
+            Console.WriteLine("Nombre de pièces fournies par chaque fournisseur");
+            while (reader.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + "  ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader.Close();
+            commande.Dispose();
+            c.Close();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Erreur : " + e.Message);
+        }
 
+    }
+    static void Chiffre_Affaires(string CS)
+    {
+        try
+        {
+            Console.WriteLine("Le chiffres d'affaires par magasin et les ventes générées par vendeur");
+            MySqlConnection c = new MySqlConnection(CS);
+            c.Open();
+            string r1 = "SELECT nom_compagnie, chiffre FROM boutique;";
+            string r2 = "SELECT nomv, ventes FROM vendeur;";
+            MySqlCommand com1 = c.CreateCommand();
+            MySqlCommand com2 = c.CreateCommand();
+            com1.CommandText = r1;
+            com2.CommandText = r2;
+            MySqlDataReader reader = com1.ExecuteReader();
+            Console.WriteLine("Chiffre d'affaires par magasin (en euros)");
+            while (reader.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + "  ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader.Close();
+            com1.Dispose();
+            c.Close();
+            c.Open();
+            MySqlDataReader reader2 = com2.ExecuteReader();
+            Console.WriteLine("Ventes générées par vendeur (en euros)");
+            while (reader2.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader2.FieldCount; i++)
+                {
+                    string valueAsString = reader2.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + "  ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader2.Close();
+            com2.Dispose();
+            c.Close();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Erreur : " + e.Message);
+        }
     }
 
 
