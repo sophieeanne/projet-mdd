@@ -79,7 +79,7 @@ namespace projet_mdd
                 c.fidelio AS NumeroFidelio,
                 c.expiration_fidélio AS DateExpiration
             FROM client c
-            JOIN fidélio f ON c.fidelio = f.nprogrammeS
+            JOIN fidélio f ON c.fidelio = f.nprogramme
             ORDER BY f.description, c.nom, c.prenom;
         ";
 

@@ -37,18 +37,22 @@ class Program
                     Gestion_Stocks(CS);
                     break;
                 case 4:
+                    Console.Clear();
                     Console.WriteLine("Choisissez une option : \n1. Rapport des quantités vendues \n2. Liste des membres des programmes d'adhésion \n3. Afficher membres et expiration");
                     int sousChoix = Convert.ToInt32(Console.ReadLine());
                     if (sousChoix == 1)
                     {
+                        Console.Clear();
                         stats.RapportQuantitesVendues();
                     }
                     else if (sousChoix == 2)
                     {
+                        Console.Clear();
                         stats.ListeMembresProgrammes();
                     }
                     else if (sousChoix == 3)
                     {
+                        Console.Clear();
                         stats.AfficherMembresEtExpiration();
                     }
                     
