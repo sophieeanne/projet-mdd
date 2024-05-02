@@ -13,25 +13,34 @@ class Program
         string CS = "SERVER=localhost;PORT=3306;DATABASE=VeloMax;UID=root;PASSWORD=root;"; //CS = Connection String
         Console.WriteLine("Bienvenue sur VeloMax. Appuyez sur une touche du clavier pour continuer");
         Console.ReadKey();
-        Console.Clear();
-        Console.WriteLine("Voulez-vous accéder à : \n1. La démo évaluateur de VeloMax \n2. La gestion des tables \n3. La gestion des stocks ");
-        Console.WriteLine("Veuillez entrer le numéro de la démo ou gestion que vous souhaitez utiliser");
-        int choix = Convert.ToInt32(Console.ReadLine());
-        switch (choix)
+        string continuer;
+        do
         {
-            case 1:
-                Demo(CS);
-                break;
-            case 2:
-                Gestion_Tables(CS);
-                break;
-            case 3:
-                //Gestion_Stocks(CS);
-                break;
-            default:
-                Console.WriteLine("Erreur, veuillez entrer un numéro valide");
-                break;
-        } 
+            Console.Clear();
+            Console.WriteLine("Voulez-vous accéder à : \n1. La démo évaluateur de VeloMax \n2. La gestion des tables \n3. La gestion des stocks ");
+            Console.WriteLine("Veuillez entrer le numéro de la démo ou gestion que vous souhaitez utiliser");
+            int choix = Convert.ToInt32(Console.ReadLine());
+            switch (choix)
+            {
+                case 1:
+                    Demo(CS);
+                    break;
+                case 2:
+                    Gestion_Tables(CS);
+                    break;
+                case 3:
+                    Gestion_Stocks(CS);
+                    break;
+                default:
+                    Console.WriteLine("Erreur, veuillez entrer un numéro valide");
+                    break;
+            }
+            Console.WriteLine("Voulez-vous tester une autre fonctionnalité ? (O/N)");
+            continuer = Console.ReadLine();
+        }while(continuer == "O" || continuer == "o");
+        Console.Clear();
+        Console.WriteLine("Merci d'avoir utilisé VeloMax >_< ! Appuyez sur une touche pour quitter");
+        Console.ReadKey();
     }
 
 
@@ -590,6 +599,8 @@ class Program
             MySqlCommand suppression = maConnexion.CreateCommand(); 
             Console.WriteLine("Veuillez entrer le numéro de siret du fournisseur à supprimer");
             int siret = Convert.ToInt32(Console.ReadLine());
+
+           
             suppression.CommandText = "DELETE FROM fournisseur WHERE siret = @siret";
             suppression.Parameters.AddWithValue("@siret", siret);
             int lignes = suppression.ExecuteNonQuery();
@@ -604,7 +615,7 @@ class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error: " + e.Message);
+            Console.WriteLine("Ce fournisseur apparait dans une autre table, il ne peut donc pas être supprimé");
             return;
         }
     }
@@ -837,7 +848,7 @@ class Program
         }
         catch(Exception e)
         {
-            Console.WriteLine("Error: " + e.Message);
+            Console.WriteLine("Cette boutique apparait dans une table (stocks_magasin), elle ne peut donc pas être supprimée");
             return;
         }
     }
@@ -1072,6 +1083,7 @@ class Program
             MySqlCommand suppression = maConnexion.CreateCommand();
             Console.WriteLine("Veuillez entrer le numéro de produit du modèle à supprimer");
             int nprod = Convert.ToInt32(Console.ReadLine());
+
             suppression.CommandText = "DELETE FROM modele WHERE nprod = @nprod";
             suppression.Parameters.AddWithValue("@nprod", nprod);
             int lignes = suppression.ExecuteNonQuery();
@@ -1086,7 +1098,7 @@ class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error: " + e.Message);
+            Console.WriteLine("Ce modèle de vélo apparait dans une table, il ne peut donc pas être supprimé");
             return;
         }
     }
@@ -1341,7 +1353,7 @@ class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error: " + e.Message);
+            Console.WriteLine("Cette pièce apparait dans une table, elle ne peut donc pas être supprimée");
             return;
         }
     }
@@ -2047,7 +2059,7 @@ class Program
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error: " + e.Message);
+            Console.WriteLine("Ce client est lié à une commande, il ne peut donc pas être supprimé");
             return;
         }
     }
@@ -2248,6 +2260,226 @@ class Program
             Console.WriteLine("Erreur : " + e.Message);
         }
     }
+
+
+
+
+    //Gestion des stocks
+    static void Gestion_Stocks (string CS)
+    {
+        string continuer;
+        Console.Clear();
+        Console.BackgroundColor = ConsoleColor.Magenta;
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine("Bienvenue sur la gestion des stocks de VeloMax");
+        do
+        {
+            Console.Clear();
+            Console.WriteLine("Quel est le stock dont vous voulez avoir la connaissance ? \n1. Stocks des pièces \n2. Stocks des vélos \n3. Stocks des fournisseurs \n4. Stocks des boutiques");
+            Console.WriteLine("Entrez le numéro correspondant");
+            int choix = Convert.ToInt32(Console.ReadLine());
+            switch (choix)
+            {
+                case 1:
+                    Console.Clear();
+                    Stocks_Pieces(CS);
+                    break;
+                case 2:
+                    Console.Clear();
+                    Stocks_Modele(CS);
+                    break;
+                case 3:
+                    Console.Clear();
+                    Stocks_Fournisseurs(CS);
+                    break;
+                case 4:
+                    Console.Clear();
+                    Stocks_Boutiques(CS);
+                    break;
+                default:
+                    Console.WriteLine("Erreur, veuillez entrer un numéro valide");
+                    break;
+            }
+            Console.WriteLine("\nVoulez-vous continuer ? (O/N)");
+            continuer = Console.ReadLine();
+        }while(continuer == "O" || continuer == "o");
+      
+    }
+
+    static void Stocks_Pieces(string CS)
+    {
+        try
+        {
+            Console.WriteLine("Stocks des pièces : \n");
+            MySqlConnection maConnexion = new MySqlConnection(CS);
+            maConnexion.Open();
+            string requete = "SELECT nprod_p, desc_p, quantité FROM pièce";
+            MySqlCommand commande = maConnexion.CreateCommand();
+            commande.CommandText = requete;
+            MySqlDataReader reader = commande.ExecuteReader();
+            Console.WriteLine("Numéro de la pièce | Description de la pièce | Quantité en stock");
+            while (reader.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader.Close();
+            commande.Dispose();
+            maConnexion.Close();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Erreur : " + e.Message);
+        }
+    }
+    static void Stocks_Modele(string CS)
+    {
+        try
+        {
+            Console.WriteLine("Stocks des vélos : \n");
+            MySqlConnection maConnexion = new MySqlConnection(CS);
+            maConnexion.Open();
+            string requete = "SELECT nprod, nom, stock FROM modele";
+            MySqlCommand commande = maConnexion.CreateCommand();
+            commande.CommandText = requete;
+            MySqlDataReader reader = commande.ExecuteReader();
+            Console.WriteLine("Numéro du vélo | Nom du vélo | Stock");
+            while (reader.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader.Close();
+            commande.Dispose();
+            maConnexion.Close();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Erreur : " + e.Message);
+        }
+    }
+    static void Stocks_Fournisseurs(string CS)
+    {
+        try
+        {
+            Console.WriteLine("Stocks des pièces par fournisseur : \n");
+            MySqlConnection maConnexion = new MySqlConnection(CS);
+            maConnexion.Open();
+            string requete = "SELECT siret, nom_piece, stock_p FROM stock_fournisseur WHERE nom_piece IS NOT NULL;";
+            MySqlCommand commande = maConnexion.CreateCommand();
+            commande.CommandText = requete;
+            MySqlDataReader reader = commande.ExecuteReader();
+            Console.WriteLine("Numéro de siret | Nom de la pièce | Stock");
+            while (reader.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader.Close();
+
+            Console.WriteLine("Appuyer sur une touche pour continuer"); 
+            Console.ReadKey();
+            Console.Clear();
+
+            Console.WriteLine("Stocks des vélos par fournisseur : \n");
+            string requete2 = "SELECT siret, nom_vélo, stock_v FROM stock_fournisseur WHERE nom_vélo IS NOT NULL;";
+            MySqlCommand commande2 = maConnexion.CreateCommand();
+            commande2.CommandText = requete2;
+            MySqlDataReader reader2 = commande2.ExecuteReader();
+            Console.WriteLine("Numéro de siret | Nom du vélo | Stock");
+            while (reader2.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader2.FieldCount; i++)
+                {
+                    string valueAsString = reader2.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader2.Close();
+            commande.Dispose();
+            commande2.Dispose();
+            maConnexion.Close();
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Erreur : " + e.Message);
+        }
+    }
+    static void Stocks_Boutiques(string CS)
+    {
+        try
+        {
+            Console.WriteLine("Stocks des vélos par boutique : \n");
+            MySqlConnection maConnexion = new MySqlConnection(CS);
+            maConnexion.Open();
+            string requete1 = "SELECT nom, nom_vélo, stock_v FROM stock_magasin WHERE nom_vélo IS NOT NULL;";
+            MySqlCommand commande1 = maConnexion.CreateCommand();
+            commande1.CommandText = requete1;
+            MySqlDataReader reader1 = commande1.ExecuteReader();
+            Console.WriteLine("Nom de la boutique | Nom du vélo | Stock");
+            while (reader1.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader1.FieldCount; i++)
+                {
+                    string valueAsString = reader1.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader1.Close();
+            commande1.Dispose();
+
+            Console.WriteLine("Appuyer sur une touche pour continuer");
+            Console.ReadKey();
+            Console.Clear();
+
+            Console.WriteLine("Stocks des pièces par boutique : \n");
+            string requete2 = "SELECT nom, nom_piece, stock_p FROM stock_magasin WHERE nom_piece IS NOT NULL;";
+            MySqlCommand commande2 = maConnexion.CreateCommand();
+            commande2.CommandText = requete2;
+            MySqlDataReader reader2 = commande2.ExecuteReader();
+            Console.WriteLine("Nom de la boutique | Nom de la pièce | Stock");
+            while (reader2.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader2.FieldCount; i++)
+                {
+                    string valueAsString = reader2.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader2.Close();
+            commande2.Dispose();
+            maConnexion.Close();
+
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine("Erreur : " + e.Message);
+        }
+
+    }
+
 
 
 }
