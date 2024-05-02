@@ -11,12 +11,10 @@ class Program
     static void Main()
     {
         string CS = "SERVER=localhost;PORT=3306;DATABASE=VeloMax;UID=root;PASSWORD=root;"; //CS = Connection String
-        Console.BackgroundColor = ConsoleColor.White;
-        Console.ForegroundColor = ConsoleColor.Black;
         Console.WriteLine("Bienvenue sur VeloMax. Appuyez sur une touche du clavier pour continuer");
         Console.ReadKey();
         Console.Clear();
-        Console.WriteLine("Voulez-vous accéder à : \n1. La démo évaluateur de VeloMax \n2. la gestion des tables \n3. la gestion des stocks ");
+        Console.WriteLine("Voulez-vous accéder à : \n1. La démo évaluateur de VeloMax \n2. La gestion des tables \n3. La gestion des stocks ");
         Console.WriteLine("Veuillez entrer le numéro de la démo ou gestion que vous souhaitez utiliser");
         int choix = Convert.ToInt32(Console.ReadLine());
         switch (choix)
@@ -41,6 +39,8 @@ class Program
     // Menu Gestion des tables
     static void Gestion_Tables(string CS)
     {
+        Console.BackgroundColor = ConsoleColor.Cyan;
+        Console.ForegroundColor = ConsoleColor.Black;
         string continuer;
         do
         {
@@ -1651,6 +1651,8 @@ class Program
     static void Demo(string CS)
     {
         string continuer;
+        Console.BackgroundColor = ConsoleColor.Gray;
+        Console.ForegroundColor = ConsoleColor.Black;
         Console.WriteLine("Bienvenue sur la démo évaluateur de VeloMax");
         Console.WriteLine("Voici les différentes fonctionnalités de cette démo");
         do
