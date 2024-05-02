@@ -37,7 +37,7 @@ class Program
                     Gestion_Stocks(CS);
                     break;
                 case 4:
-                    Console.WriteLine("Choisissez une option : \n1. Rapport des quantités vendues \n2. Liste des membres des programmes d'adhésion");
+                    Console.WriteLine("Choisissez une option : \n1. Rapport des quantités vendues \n2. Liste des membres des programmes d'adhésion \n3. Afficher membres et expiration");
                     int sousChoix = Convert.ToInt32(Console.ReadLine());
                     if (sousChoix == 1)
                     {
@@ -47,6 +47,11 @@ class Program
                     {
                         stats.ListeMembresProgrammes();
                     }
+                    else if (sousChoix == 3)
+                    {
+                        stats.AfficherMembresEtExpiration();
+                    }
+                    
                     else
                     {
                         Console.WriteLine("Option non valide.");
