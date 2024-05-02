@@ -6,18 +6,23 @@ using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
+using projet_mdd;
 class Program
 {
     static void Main()
     {
+
         string CS = "SERVER=localhost;PORT=3306;DATABASE=VeloMax;UID=root;PASSWORD=root;"; //CS = Connection String
         Console.WriteLine("Bienvenue sur VeloMax. Appuyez sur une touche du clavier pour continuer");
         Console.ReadKey();
         string continuer;
+        Statistiques stats = new Statistiques(CS);
+
+
         do
         {
             Console.Clear();
-            Console.WriteLine("Voulez-vous accéder à : \n1. La démo évaluateur de VeloMax \n2. La gestion des tables \n3. La gestion des stocks ");
+            Console.WriteLine("Voulez-vous accéder à : \n1. La démo évaluateur de VeloMax \n2. La gestion des tables \n3. La gestion des stocks \n4. Module Statistiques");
             Console.WriteLine("Veuillez entrer le numéro de la démo ou gestion que vous souhaitez utiliser");
             int choix = Convert.ToInt32(Console.ReadLine());
             switch (choix)
@@ -30,6 +35,10 @@ class Program
                     break;
                 case 3:
                     Gestion_Stocks(CS);
+                    break;
+                case 4:
+                    // Déclencher la fonction de rapport statistique
+                    stats.RapportQuantitesVendues();
                     break;
                 default:
                     Console.WriteLine("Erreur, veuillez entrer un numéro valide");
