@@ -37,9 +37,22 @@ class Program
                     Gestion_Stocks(CS);
                     break;
                 case 4:
-                    // Déclencher la fonction de rapport statistique
-                    stats.RapportQuantitesVendues();
+                    Console.WriteLine("Choisissez une option : \n1. Rapport des quantités vendues \n2. Liste des membres des programmes d'adhésion");
+                    int sousChoix = Convert.ToInt32(Console.ReadLine());
+                    if (sousChoix == 1)
+                    {
+                        stats.RapportQuantitesVendues();
+                    }
+                    else if (sousChoix == 2)
+                    {
+                        stats.ListeMembresProgrammes();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Option non valide.");
+                    }
                     break;
+
                 default:
                     Console.WriteLine("Erreur, veuillez entrer un numéro valide");
                     break;
