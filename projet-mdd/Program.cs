@@ -226,7 +226,7 @@ class Program
                     Console.WriteLine("Erreur, ce numéro de commande existe déjà");
                 }
             } while (count > 0);
-            Console.WriteLine("Voulez vous commander un vélo ou une pièce ou les deux? (vélo/pièce, 2)");
+            Console.WriteLine("Voulez vous commander un vélo ou une pièce ou les deux? (vélo/pièce/2)");
             string choix = Console.ReadLine();
             while (choix != "vélo" && choix != "pièce" && choix !="2")
             {
@@ -234,14 +234,14 @@ class Program
                 choix = Console.ReadLine().ToLower();
             }
 
-            int? numProd = 0;
-            int? numProd_p = 0;
+            int? numProd = null;
+            int? numProd_p = null;
             int? quantite = null;
             int? quantite_p = null;
             if (choix == "vélo")
             {
                 Console.WriteLine("Pour réference, voici les modèles de vélos disponibles : \n");   
-                string v = "SELECT nprod, nom FROM modele";
+                string v = "SELECT nprod, nom FROM modele WHERE stock > 0";
                 MySqlCommand voir_table_modele = maConnexion.CreateCommand();
                 voir_table_modele.CommandText = v;
                 MySqlDataReader reader_modele = voir_table_modele.ExecuteReader();
@@ -268,7 +268,7 @@ class Program
             else if(choix=="pièce")
             {
                 Console.WriteLine("Pour réference, voici les pièces disponibles : \n");
-                string p = "SELECT nprod_p, desc_p FROM pièce";
+                string p = "SELECT nprod_p, desc_p FROM pièce WHERE quantité >0;";
                 MySqlCommand voir_table_piece = maConnexion.CreateCommand();
                 voir_table_piece.CommandText = p;
                 MySqlDataReader reader_piece = voir_table_piece.ExecuteReader();
@@ -294,7 +294,7 @@ class Program
             else
             {
                 Console.WriteLine("Pour réference, voici les modèles de vélos disponibles : \n");
-                string v = "SELECT nprod, nom FROM modele";
+                string v = "SELECT nprod, nom FROM modele WHERE stock >0";
                 MySqlCommand voir_table_modele = maConnexion.CreateCommand();
                 voir_table_modele.CommandText = v;
                 MySqlDataReader reader_modele = voir_table_modele.ExecuteReader();
@@ -315,7 +315,7 @@ class Program
                 numProd = Convert.ToInt32(Console.ReadLine());
 
                 Console.WriteLine("Pour réference, voici les pièces disponibles : \n");
-                string p = "SELECT nprod_p, nom FROM piece";
+                string p = "SELECT nprod_p, desc_p FROM pièce WHERE quantité >0;";
                 MySqlCommand voir_table_piece = maConnexion.CreateCommand();
                 voir_table_piece.CommandText = p;
                 MySqlDataReader reader_piece = voir_table_piece.ExecuteReader();
@@ -343,14 +343,56 @@ class Program
 
             Console.WriteLine("Veuillez entrer le numéro du client");
             int numClient = Convert.ToInt32(Console.ReadLine());
+
             DateTime dateCommande = DateTime.Now;
+
             Console.WriteLine("Veuillez entrer l'adresse de livraison");
             string adresseLivraison = Console.ReadLine();
+
             DateTime dateLivraison = dateCommande.AddDays(7);
+
+            Console.WriteLine("Pour réference, voici les numéros des vendeurs et leurs boutiques correspondantes : \n");
+
+            string voir_vendeur = "SELECT nvendeur, boutique FROM vendeur";
+            MySqlCommand voir_table_vendeur = maConnexion.CreateCommand();
+            voir_table_vendeur.CommandText = voir_vendeur;
+            MySqlDataReader reader_vendeur = voir_table_vendeur.ExecuteReader();
+            Console.WriteLine("nvendeur | boutique");
+            while (reader_vendeur.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader_vendeur.FieldCount; i++)
+                {
+                    string valueAsString = reader_vendeur.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + "  ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader_vendeur.Close();
+            voir_table_vendeur.Dispose();
+            Console.WriteLine("Veuillez entrer le nom de la boutique");
+            string nomBoutique = Console.ReadLine();
+            Console.WriteLine("Veuillez entrer le numéro du vendeur");
+            int numVendeur = Convert.ToInt32(Console.ReadLine());
+
+            MySqlCommand creation = maConnexion.CreateCommand();
+
+            if(choix == "vélo")
+            {
+                creation.CommandText = "INSERT INTO commande (ncommande, nprod, nprod_p, nclient, date_commande, adresse_livraison, date_livraison, quantite, nom_magasin, nvendeur, quantite_p) VALUES " +
+                    "(@numCommande, @numProd, @numProd_p, @numClient, @dateCommande, " +
+                    "@adresseLivraison, @dateLivraison, @quantite, @nomBoutique, @numVendeur, @quantite_p)";
+                creation.Parameters.AddWithValue("@numCommande", numCommande);
+                creation.Parameters.AddWithValue("@numProd", numProd);
+                creation.Parameters.AddWithValue("@numProd_p", numProd_p);
+                creation.Parameters.AddWithValue("@numClient", numClient);
+
+            }
+
+
           
 
-           
-            creation.Dispose();
+        
         }
         catch (Exception e)
         {
@@ -1786,6 +1828,10 @@ class Program
                 case 4:
                     Console.Clear();
                     Produits_Stock(CS);
+                    Console.WriteLine("Appuyez sur une touche pour continuer");
+                    Console.ReadKey();
+                    Console.Clear();
+                    Produits_Stock2(CS);
                     break;
                 case 5:
                     Console.Clear();
@@ -2217,11 +2263,8 @@ class Program
             MySqlConnection c = new MySqlConnection(CS);
             c.Open();
             string r = "SELECT desc_p, quantité FROM pièce WHERE quantité <=2;";
-            string r1 = "SELECT nom, stock FROM modele WHERE stock <=2;";
             MySqlCommand com = c.CreateCommand();
-            MySqlCommand com2 = c.CreateCommand();
             com.CommandText = r;
-            com2.CommandText = r1;
             MySqlDataReader reader = com.ExecuteReader();
             Console.WriteLine("\nListe des pièces ayant une quantité en stock <=2");
             Console.WriteLine("Nom de la pièce | Quantité en stock");
@@ -2231,35 +2274,48 @@ class Program
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
                     string valueAsString = reader.GetValue(i).ToString();
-                    currentRowAsString += valueAsString + " ";
+                    currentRowAsString += valueAsString + " | ";
                 }
                 Console.WriteLine(currentRowAsString);
             }
-            Console.WriteLine("\nListe des vélos ayant une quantité en stock <=2");
             reader.Close();
             com.Dispose();
             c.Close();
-            c.Open();
-            MySqlDataReader r3 = com2.ExecuteReader();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Erreur : " + e.Message);
+        }
+    }
+    static void Produits_Stock2(string CS)
+    {
+        try
+        {
+            MySqlConnection maConnexion = new MySqlConnection(CS);
+            maConnexion.Open();
+            string requete = "SELECT nom, stock FROM modele WHERE stock <=2;";
+            MySqlCommand commande = maConnexion.CreateCommand();
+            commande.CommandText = requete;
+            MySqlDataReader reader = commande.ExecuteReader();
+            Console.WriteLine("Liste des vélos ayant une quantité en stock <=2");
             Console.WriteLine("Nom du vélo | Quantité en stock");
-            while (r3.Read())
+            while (reader.Read())
             {
                 string currentRowAsString = "";
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
-                    string valueAsString = r3.GetValue(i).ToString();
-                    currentRowAsString += valueAsString + " ";
+                    string valueAsString = reader.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + " | ";
                 }
                 Console.WriteLine(currentRowAsString);
             }
-            r3.Close();
-            com2.Dispose();
-            c.Close();
-
+            reader.Close();
+            commande.Dispose();
+            maConnexion.Close();
         }
         catch (Exception e)
         {
-            Console.WriteLine("Erreur : "+e.Message);
+            Console.WriteLine("Erreur : " + e.Message);
         }
     }
     static void Pieces_Velos_Fournisseur(string CS)
@@ -2388,7 +2444,6 @@ class Program
         }while(continuer == "O" || continuer == "o");
       
     }
-
     static void Stocks_Pieces(string CS)
     {
         try
