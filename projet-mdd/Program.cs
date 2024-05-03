@@ -38,6 +38,8 @@ class Program
                     break;
                 case 4:
                     Console.Clear();
+                    Console.BackgroundColor = ConsoleColor.DarkGreen;
+                    Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine("Choisissez une option : \n1. Rapport des quantités vendues \n2. Liste des membres des programmes d'adhésion \n3. Afficher membres et expiration");
                     int sousChoix = Convert.ToInt32(Console.ReadLine());
                     if (sousChoix == 1)
@@ -193,7 +195,7 @@ class Program
             voir_table.CommandText = "SELECT * FROM commande";
             MySqlDataReader reader = voir_table.ExecuteReader();
             Console.WriteLine("Voici la table commande : \n");
-            Console.WriteLine("ncommande | numéro vélo | numéro pièce | numéro client | date commande | adresse livraison | date livraison | quantité");
+            Console.WriteLine("ncommande | numéro vélo | numéro pièce | numéro client | date commande | adresse livraison | date livraison | quantité de vélo | nom du magasin | numéro du vendeur | quantité pièces");
             while (reader.Read())
             {
                 string currentRowAsString = "";
@@ -253,10 +255,38 @@ class Program
             DateTime dateLivraison = dateCommande.AddDays(7);
             Console.WriteLine("Veuillez entrer la quantité");
             int quantite = Convert.ToInt32(Console.ReadLine());
+
+            Console.WriteLine("Pour référence, voici le numéro des vendeurs et le nom des magasins : \n");
+            string v2 = "SELECT nvendeur, boutique FROM vendeur";
+            MySqlCommand voir_table_vendeur = maConnexion.CreateCommand();
+            voir_table_vendeur.CommandText = v2;
+            MySqlDataReader reader_vendeur = voir_table_vendeur.ExecuteReader();
+            Console.WriteLine("nvendeur | boutique");
+            while (reader_vendeur.Read())
+            {
+                string currentRowAsString = "";
+                for (int i = 0; i < reader_vendeur.FieldCount; i++)
+                {
+                    string valueAsString = reader_vendeur.GetValue(i).ToString();
+                    currentRowAsString += valueAsString + "  ";
+                }
+                Console.WriteLine(currentRowAsString);
+            }
+            reader_vendeur.Close();
+            voir_table_vendeur.Dispose();
+
+            Console.WriteLine("Quel magasin s'occupe de la commande ?");
+            string nomMagasin = Console.ReadLine();
+            Console.WriteLine("Quel vendeur s'occupe de la commande ?");
+            int numVendeur = Convert.ToInt32(Console.ReadLine());
+
+
+            
+
             if(choix == "vélo")
             {
                 MySqlCommand creation = maConnexion.CreateCommand();
-                creation.CommandText = "INSERT INTO commande (ncommande, nprod, nclient, date_commande, adresse_livraison, date_livraison, quantite) VALUES (@numCommande, @numProd, @numClient, @dateCommande, @adresseLivraison, @dateLivraison, @quantite)";
+                creation.CommandText = "INSERT INTO commande (ncommande, nprod, nclient, date_commande, adresse_livraison, date_livraison, quantite, nom_magasin, nvendeur, quantite_p) VALUES (@numCommande, @numProd, @numClient, @dateCommande, @adresseLivraison, @dateLivraison, @quantite, @nomMagasin, @numVendeur, NULL)";
                 creation.Parameters.AddWithValue("@numProd", numProd);
                 creation.Parameters.AddWithValue("@numClient", numClient);
                 creation.Parameters.AddWithValue("@dateCommande", dateCommande);
@@ -264,6 +294,8 @@ class Program
                 creation.Parameters.AddWithValue("@dateLivraison", dateLivraison);
                 creation.Parameters.AddWithValue("@quantite", quantite);
                 creation.Parameters.AddWithValue("@numCommande", numCommande);
+                creation.Parameters.AddWithValue("@nomMagasin", nomMagasin);
+                creation.Parameters.AddWithValue("@numVendeur", numVendeur);
                 int lignes = creation.ExecuteNonQuery();
                 if (lignes > 0)
                 {
@@ -279,7 +311,7 @@ class Program
             else
             {
                 MySqlCommand creation = maConnexion.CreateCommand();
-                creation.CommandText = "INSERT INTO commande (ncommande, nprod_p, nclient, date_commande, adresse_livraison, date_livraison, quantite) VALUES (@numCommande, @numProd_p, @numClient, @dateCommande, @adresseLivraison, @dateLivraison, @quantite)";
+                creation.CommandText = "INSERT INTO commande (ncommande, nprod_p, nclient, date_commande, adresse_livraison, date_livraison, quantite_p) VALUES (@numCommande, @numProd_p, @numClient, @dateCommande, @adresseLivraison, @dateLivraison, @quantite)";
                 creation.Parameters.AddWithValue("@numProd_p", numProd_p);
                 creation.Parameters.AddWithValue("@numClient", numClient);
                 creation.Parameters.AddWithValue("@dateCommande", dateCommande);
