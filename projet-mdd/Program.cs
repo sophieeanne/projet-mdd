@@ -226,111 +226,131 @@ class Program
                     Console.WriteLine("Erreur, ce numéro de commande existe déjà");
                 }
             } while (count > 0);
-            Console.WriteLine("Voulez vous commander un vélo ou une pièce ? (vélo/pièce)");
+            Console.WriteLine("Voulez vous commander un vélo ou une pièce ou les deux? (vélo/pièce, 2)");
             string choix = Console.ReadLine();
-            while (choix != "vélo" && choix != "pièce")
+            while (choix != "vélo" && choix != "pièce" && choix !="2")
             {
                 Console.WriteLine("Erreur de frappe.Veuillez rentrer une information valide");
                 choix = Console.ReadLine().ToLower();
             }
+
             int? numProd = 0;
             int? numProd_p = 0;
+            int? quantite = null;
+            int? quantite_p = null;
             if (choix == "vélo")
             {
+                Console.WriteLine("Pour réference, voici les modèles de vélos disponibles : \n");   
+                string v = "SELECT nprod, nom FROM modele";
+                MySqlCommand voir_table_modele = maConnexion.CreateCommand();
+                voir_table_modele.CommandText = v;
+                MySqlDataReader reader_modele = voir_table_modele.ExecuteReader();
+                Console.WriteLine("nprod | nom");
+                while (reader_modele.Read())
+                {
+                    string currentRowAsString = "";
+                    for (int i = 0; i < reader_modele.FieldCount; i++)
+                    {
+                        string valueAsString = reader_modele.GetValue(i).ToString();
+                        currentRowAsString += valueAsString + "  ";
+                    }
+                    Console.WriteLine(currentRowAsString);
+                }
+                reader_modele.Close();
+                voir_table_modele.Dispose();
+
                 Console.WriteLine("Veuillez entrer le numéro du vélo");
                 numProd = Convert.ToInt32(Console.ReadLine());
                 numProd_p = null;
+                Console.WriteLine("Veuillez entrer la quantité de vélos");
+                quantite = Convert.ToInt32(Console.ReadLine());
             }
-            else
+            else if(choix=="pièce")
             {
+                Console.WriteLine("Pour réference, voici les pièces disponibles : \n");
+                string p = "SELECT nprod_p, desc_p FROM pièce";
+                MySqlCommand voir_table_piece = maConnexion.CreateCommand();
+                voir_table_piece.CommandText = p;
+                MySqlDataReader reader_piece = voir_table_piece.ExecuteReader();
+                Console.WriteLine("nprod_p | nom");
+                while (reader_piece.Read())
+                {
+                    string currentRowAsString = "";
+                    for (int i = 0; i < reader_piece.FieldCount; i++)
+                    {
+                        string valueAsString = reader_piece.GetValue(i).ToString();
+                        currentRowAsString += valueAsString + "  ";
+                    }
+                    Console.WriteLine(currentRowAsString);
+                }
+                reader_piece.Close();
+                voir_table_piece.Dispose();
                 Console.WriteLine("Veuillez entrer le numéro de la pièce");
                 numProd_p = Convert.ToInt32(Console.ReadLine());
                 numProd = null;
+                Console.WriteLine("Veuillez entrer la quantité de pièces");
+                quantite_p = Convert.ToInt32(Console.ReadLine());
             }
+            else
+            {
+                Console.WriteLine("Pour réference, voici les modèles de vélos disponibles : \n");
+                string v = "SELECT nprod, nom FROM modele";
+                MySqlCommand voir_table_modele = maConnexion.CreateCommand();
+                voir_table_modele.CommandText = v;
+                MySqlDataReader reader_modele = voir_table_modele.ExecuteReader();
+                Console.WriteLine("nprod | nom");
+                while (reader_modele.Read())
+                {
+                    string currentRowAsString = "";
+                    for (int i = 0; i < reader_modele.FieldCount; i++)
+                    {
+                        string valueAsString = reader_modele.GetValue(i).ToString();
+                        currentRowAsString += valueAsString + "  ";
+                    }
+                    Console.WriteLine(currentRowAsString);
+                }
+                reader_modele.Close();
+                voir_table_modele.Dispose();
+                Console.WriteLine("Veuillez entrer le numéro du vélo");
+                numProd = Convert.ToInt32(Console.ReadLine());
+
+                Console.WriteLine("Pour réference, voici les pièces disponibles : \n");
+                string p = "SELECT nprod_p, nom FROM piece";
+                MySqlCommand voir_table_piece = maConnexion.CreateCommand();
+                voir_table_piece.CommandText = p;
+                MySqlDataReader reader_piece = voir_table_piece.ExecuteReader();
+                Console.WriteLine("nprod_p | nom");
+                while (reader_piece.Read())
+                {
+                    string currentRowAsString = "";
+                    for (int i = 0; i < reader_piece.FieldCount; i++)
+                    {
+                        string valueAsString = reader_piece.GetValue(i).ToString();
+                        currentRowAsString += valueAsString + "  ";
+                    }
+                    Console.WriteLine(currentRowAsString);
+                }
+                reader_piece.Close();
+                voir_table_piece.Dispose();
+
+                Console.WriteLine("Veuillez entrer le numéro de la pièce");
+                numProd_p = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Veuillez entrer la quantité de pièces");
+                quantite_p = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Veuillez entrer la quantité de vélos");
+                quantite = Convert.ToInt32(Console.ReadLine());
+            }
+
             Console.WriteLine("Veuillez entrer le numéro du client");
             int numClient = Convert.ToInt32(Console.ReadLine());
             DateTime dateCommande = DateTime.Now;
             Console.WriteLine("Veuillez entrer l'adresse de livraison");
             string adresseLivraison = Console.ReadLine();
             DateTime dateLivraison = dateCommande.AddDays(7);
-            Console.WriteLine("Veuillez entrer la quantité");
-            int quantite = Convert.ToInt32(Console.ReadLine());
+          
 
-            Console.WriteLine("Pour référence, voici le numéro des vendeurs et le nom des magasins : \n");
-            string v2 = "SELECT nvendeur, boutique FROM vendeur";
-            MySqlCommand voir_table_vendeur = maConnexion.CreateCommand();
-            voir_table_vendeur.CommandText = v2;
-            MySqlDataReader reader_vendeur = voir_table_vendeur.ExecuteReader();
-            Console.WriteLine("nvendeur | boutique");
-            while (reader_vendeur.Read())
-            {
-                string currentRowAsString = "";
-                for (int i = 0; i < reader_vendeur.FieldCount; i++)
-                {
-                    string valueAsString = reader_vendeur.GetValue(i).ToString();
-                    currentRowAsString += valueAsString + "  ";
-                }
-                Console.WriteLine(currentRowAsString);
-            }
-            reader_vendeur.Close();
-            voir_table_vendeur.Dispose();
-
-            Console.WriteLine("Quel magasin s'occupe de la commande ?");
-            string nomMagasin = Console.ReadLine();
-            Console.WriteLine("Quel vendeur s'occupe de la commande ?");
-            int numVendeur = Convert.ToInt32(Console.ReadLine());
-
-
-            
-
-            if(choix == "vélo")
-            {
-                MySqlCommand creation = maConnexion.CreateCommand();
-                creation.CommandText = "INSERT INTO commande (ncommande, nprod, nclient, date_commande, adresse_livraison, date_livraison, quantite, nom_magasin, nvendeur, quantite_p) VALUES (@numCommande, @numProd, @numClient, @dateCommande, @adresseLivraison, @dateLivraison, @quantite, @nomMagasin, @numVendeur, NULL)";
-                creation.Parameters.AddWithValue("@numProd", numProd);
-                creation.Parameters.AddWithValue("@numClient", numClient);
-                creation.Parameters.AddWithValue("@dateCommande", dateCommande);
-                creation.Parameters.AddWithValue("@adresseLivraison", adresseLivraison);
-                creation.Parameters.AddWithValue("@dateLivraison", dateLivraison);
-                creation.Parameters.AddWithValue("@quantite", quantite);
-                creation.Parameters.AddWithValue("@numCommande", numCommande);
-                creation.Parameters.AddWithValue("@nomMagasin", nomMagasin);
-                creation.Parameters.AddWithValue("@numVendeur", numVendeur);
-                int lignes = creation.ExecuteNonQuery();
-                if (lignes > 0)
-                {
-                    Console.WriteLine("Commande créée");
-                }
-                else
-                {
-                    Console.WriteLine("Erreur lors de la création de la commande");
-                }
-                creation.Dispose();
-                maConnexion.Close();
-            }
-            else
-            {
-                MySqlCommand creation = maConnexion.CreateCommand();
-                creation.CommandText = "INSERT INTO commande (ncommande, nprod_p, nclient, date_commande, adresse_livraison, date_livraison, quantite_p) VALUES (@numCommande, @numProd_p, @numClient, @dateCommande, @adresseLivraison, @dateLivraison, @quantite)";
-                creation.Parameters.AddWithValue("@numProd_p", numProd_p);
-                creation.Parameters.AddWithValue("@numClient", numClient);
-                creation.Parameters.AddWithValue("@dateCommande", dateCommande);
-                creation.Parameters.AddWithValue("@adresseLivraison", adresseLivraison);
-                creation.Parameters.AddWithValue("@dateLivraison", dateLivraison);
-                creation.Parameters.AddWithValue("@quantite", quantite);
-                creation.Parameters.AddWithValue("@numCommande", numCommande);
-                int lignes = creation.ExecuteNonQuery();
-                if (lignes > 0)
-                {
-                    Console.WriteLine("Commande créée");
-                }
-                else
-                {
-                    Console.WriteLine("Erreur lors de la création de la commande");
-                }
-                creation.Dispose();
-                maConnexion.Close();
-            }
+           
+            creation.Dispose();
         }
         catch (Exception e)
         {
