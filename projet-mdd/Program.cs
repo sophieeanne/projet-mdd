@@ -11,6 +11,7 @@ class Program
 {
     static void Main()
     {
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
 
         string CS = "SERVER=localhost;PORT=3306;DATABASE=VeloMax;UID=root;PASSWORD=root;"; //CS = Connection String
         Console.WriteLine("Bienvenue sur VeloMax. Appuyez sur une touche du clavier pour continuer");
@@ -37,31 +38,7 @@ class Program
                     Gestion_Stocks(CS);
                     break;
                 case 4:
-                    Console.Clear();
-                    Console.BackgroundColor = ConsoleColor.DarkGreen;
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("Choisissez une option : \n1. Rapport des quantités vendues \n2. Liste des membres des programmes d'adhésion \n3. Afficher membres et expiration");
-                    int sousChoix = Convert.ToInt32(Console.ReadLine());
-                    if (sousChoix == 1)
-                    {
-                        Console.Clear();
-                        stats.RapportQuantitesVendues();
-                    }
-                    else if (sousChoix == 2)
-                    {
-                        Console.Clear();
-                        stats.ListeMembresProgrammes();
-                    }
-                    else if (sousChoix == 3)
-                    {
-                        Console.Clear();
-                        stats.AfficherMembresEtExpiration();
-                    }
-                    
-                    else
-                    {
-                        Console.WriteLine("Option non valide.");
-                    }
+                    Module_Statistique(CS);
                     break;
 
                 default:
@@ -76,7 +53,52 @@ class Program
         Console.ReadKey();
     }
 
-
+    static void Module_Statistique(string CS)
+    {
+        Statistiques stats = new Statistiques(CS);
+        Console.Clear();
+        Console.BackgroundColor = ConsoleColor.DarkGreen;
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine("Module Statistiques");
+        Console.WriteLine("Choisissez une option :");
+        Console.WriteLine("1. Rapport des quantités vendues");
+        Console.WriteLine("2. Liste des membres des programmes d'adhésion");
+        Console.WriteLine("3. Afficher membres et expiration");
+        Console.WriteLine("4. Meilleur client par montant total des ventes");
+        Console.WriteLine("5. Liste des produits avec quantité en stock <= 2");
+        Console.WriteLine("6. Nombre de produits par fournisseur");
+        Console.WriteLine("7. Chiffre d'affaires par magasin et ventes par vendeur");
+        Console.WriteLine("Veuillez entrer le numéro de l'option que vous souhaitez utiliser");
+        int choixStat = Convert.ToInt32(Console.ReadLine());
+        switch (choixStat)
+        {
+            case 1:
+                stats.RapportQuantitesVendues();
+                break;
+            case 2:
+                stats.ListeMembresProgrammes();
+                break;
+            case 3:
+                stats.AfficherMembresEtExpiration();
+                break;
+            case 4:
+                stats.MeilleurClientParMontantVente();
+                break;
+            case 5:
+                stats.ListerProduitsFaibleQuantite();
+                break;
+            case 6:
+                stats.NombreProduitsParFournisseur();
+                break;
+            case 7:
+                stats.ChiffreAffairesParMagasinEtVentesParVendeur();
+                break;
+            default:
+                Console.WriteLine("Option non valide. Veuillez choisir une option entre 1 et 4.");
+                break;
+        }
+        Console.ResetColor();
+    }
 
     // Menu Gestion des tables
     static void Gestion_Tables(string CS)
