@@ -62,12 +62,10 @@ class Program
         Console.WriteLine("Module Statistiques");
         Console.WriteLine("Choisissez une option :");
         Console.WriteLine("1. Rapport des quantités vendues");
-        Console.WriteLine("2. Liste des membres des programmes d'adhésion");
-        Console.WriteLine("3. Afficher membres et expiration");
-        Console.WriteLine("4. Meilleur client par montant total des ventes");
-        Console.WriteLine("5. Liste des produits avec quantité en stock <= 2");
-        Console.WriteLine("6. Nombre de produits par fournisseur");
-        Console.WriteLine("7. Chiffre d'affaires par magasin et ventes par vendeur");
+        Console.WriteLine("2. Afficher membres et expiration");
+        Console.WriteLine("3. Meilleur client par montant total des ventes");
+        Console.WriteLine("4. Analyse des commandes");
+        Console.WriteLine("5. Calcul des bonus des salariés");
         Console.WriteLine("Veuillez entrer le numéro de l'option que vous souhaitez utiliser");
         int choixStat = Convert.ToInt32(Console.ReadLine());
         switch (choixStat)
@@ -76,29 +74,30 @@ class Program
                 stats.RapportQuantitesVendues();
                 break;
             case 2:
-                stats.ListeMembresProgrammes();
-                break;
-            case 3:
                 stats.AfficherMembresEtExpiration();
                 break;
-            case 4:
+            case 3:
                 stats.MeilleurClientParMontantVente();
                 break;
+            case 4:
+                stats.AnalyseCommandes();
+                break;
             case 5:
-                stats.ListerProduitsFaibleQuantite();
-                break;
-            case 6:
-                stats.NombreProduitsParFournisseur();
-                break;
-            case 7:
-                stats.ChiffreAffairesParMagasinEtVentesParVendeur();
+                Console.WriteLine("Veuillez entrer le coefficient global :");
+                double coeffglobal = Convert.ToDouble(Console.ReadLine());
+                Console.WriteLine("Veuillez entrer le coefficient 1 (pour la satisfaction) :");
+                double coeff1 = Convert.ToDouble(Console.ReadLine());
+                Console.WriteLine("Veuillez entrer le coefficient 2 (pour le chiffre d'affaires) :");
+                double coeff2 = Convert.ToDouble(Console.ReadLine());
+                stats.CalculBonusSalaries(coeffglobal, coeff1, coeff2);
                 break;
             default:
-                Console.WriteLine("Option non valide. Veuillez choisir une option entre 1 et 4.");
+                Console.WriteLine("Option non valide. Veuillez choisir une option entre 1 et 5.");
                 break;
         }
         Console.ResetColor();
     }
+
 
     // Menu Gestion des tables
     static void Gestion_Tables(string CS)
