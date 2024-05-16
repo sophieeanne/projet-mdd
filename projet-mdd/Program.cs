@@ -1634,7 +1634,7 @@ class Program
             voir_table.CommandText = "SELECT * FROM vendeur";
             MySqlDataReader reader = voir_table.ExecuteReader();
             Console.WriteLine("Voici la table vendeur : \n");
-            Console.WriteLine("nvendeur nomv prenomv numerov emailv boutique ventes satisfaction_client");
+            Console.WriteLine("nvendeur nomv prenomv numerov emailv boutique ventes (en K euros) satisfaction_client");
             while (reader.Read())
             {
                 string currentRowAsString = "";
@@ -1738,7 +1738,7 @@ class Program
             voir_table.CommandText = "SELECT * FROM vendeur";
             MySqlDataReader reader = voir_table.ExecuteReader();
             Console.WriteLine("Voici la table vendeur : \n");
-            Console.WriteLine("nvendeur nomv prenomv numerov emailv boutique ventes satisfaction_client");
+            Console.WriteLine("nvendeur nomv prenomv numerov emailv boutique ventes (en K euros) satisfaction_client");
             while (reader.Read())
             {
                 string currentRowAsString = "";
@@ -1855,7 +1855,7 @@ class Program
             voir_table.CommandText = "SELECT * FROM vendeur";
             MySqlDataReader reader = voir_table.ExecuteReader();
             Console.WriteLine("Voici la table vendeur : \n");
-            Console.WriteLine("nvendeur nomv prenomv numerov emailv boutique ventes satisfaction_client");
+            Console.WriteLine("nvendeur nomv prenomv numerov emailv boutique ventes (en K euros) satisfaction_client");
             while (reader.Read())
             {
                 string currentRowAsString = "";
