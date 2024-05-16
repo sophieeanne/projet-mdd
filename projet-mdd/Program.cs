@@ -49,7 +49,7 @@ class Program
             continuer = Console.ReadLine();
         }while(continuer == "O" || continuer == "o");
         Console.Clear();
-        Console.WriteLine("Merci d'avoir utilisé VeloMax >_< ! Appuyez sur une touche pour quitter");
+        Console.WriteLine("Merci d'avoir utilisé VeloMax ! Appuyez sur une touche pour quitter");
         Console.ReadKey();
     }
 
