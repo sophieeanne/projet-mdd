@@ -2491,7 +2491,7 @@ class Program
             c.Close();
             c.Open();
             MySqlDataReader reader2 = com2.ExecuteReader();
-            Console.WriteLine("Ventes générées par vendeur (en euros)");
+            Console.WriteLine("Ventes générées par vendeur (en milleur d'euros)");
             while (reader2.Read())
             {
                 string currentRowAsString = "";
